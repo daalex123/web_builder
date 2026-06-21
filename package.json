@@ -11,6 +11,7 @@
     "dev:all": "npm run dev:admin & npm run dev:web",
     "dev:admin": "npm run dev --workspace=@cms/admin",
     "dev:web": "npm run dev --workspace=@cms/web",
+    "preview:vercel": "npm run preview:vercel --workspace=@cms/admin",
     "build": "npm run build --workspace=@cms/web",
     "build:admin": "npm run db:generate && npm run build --workspace=@cms/admin",
     "serve": "npm run serve --workspace=@cms/web",

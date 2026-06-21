@@ -9,60 +9,90 @@ const packageRoot = path.resolve(
   "..",
 );
 
+function isPostgresUrl(value: string | undefined): value is string {
+  if (!value?.trim()) return false;
+  return (
+    value.startsWith("postgresql://") || value.startsWith("postgres://")
+  );
+}
+
+function envVar(name: string): string | undefined {
+  const value = process.env[name];
+  return value?.trim() ? value : undefined;
+}
+
 function loadDatabaseEnvFiles(): void {
-  if (
-    process.env.DATABASE_URL ||
-    process.env.POSTGRES_PRISMA_URL ||
-    process.env.PRISMA_DATABASE_URL
-  ) {
-    return;
-  }
+  const hasPostgresUrl = [
+    "DATABASE_URL",
+    "POSTGRES_PRISMA_URL",
+    "PRISMA_DATABASE_URL",
+    "new_DATABASE_URL",
+    "new_PRISMA_DATABASE_URL",
+    "POSTGRES_URL",
+    "new_POSTGRES_URL",
+  ].some((name) => isPostgresUrl(envVar(name)));
+
+  if (hasPostgresUrl) return;
 
   loadEnv({ path: path.join(packageRoot, ".env") });
 }
 
-loadDatabaseEnvFiles();
+function pickDatabaseUrl(): string | undefined {
+  const candidates = [
+    envVar("DATABASE_URL"),
+    envVar("POSTGRES_PRISMA_URL"),
+    envVar("PRISMA_DATABASE_URL"),
+    envVar("new_DATABASE_URL"),
+    envVar("new_PRISMA_DATABASE_URL"),
+    envVar("POSTGRES_URL"),
+    envVar("new_POSTGRES_URL"),
+    envVar("DIRECT_URL"),
+    envVar("POSTGRES_URL_NON_POOLING"),
+  ].filter(isPostgresUrl);
 
-function firstPostgresUrl(values: (string | undefined)[]): string | undefined {
-  for (const value of values) {
-    if (!value?.trim()) continue;
-    if (
-      value.startsWith("postgresql://") ||
-      value.startsWith("postgres://")
-    ) {
-      return value;
-    }
-  }
-  return undefined;
+  const pooled = candidates.find(
+    (url) =>
+      url.includes("pooled.db.prisma.io") ||
+      url.includes("-pooler.") ||
+      url.includes("pgbouncer=true"),
+  );
+
+  return pooled ?? candidates[0];
+}
+
+function pickDirectUrl(fallback?: string): string | undefined {
+  const candidates = [
+    envVar("DIRECT_URL"),
+    envVar("POSTGRES_URL_NON_POOLING"),
+    envVar("POSTGRES_URL"),
+    envVar("new_POSTGRES_URL"),
+    fallback,
+  ].filter(isPostgresUrl);
+
+  const direct = candidates.find((url) => url.includes("db.prisma.io"));
+  return direct ?? candidates[0];
 }
 
 function ensureDatabaseEnv(): void {
-  const pooled = firstPostgresUrl([
-    process.env.DATABASE_URL,
-    process.env.POSTGRES_PRISMA_URL,
-    process.env.PRISMA_DATABASE_URL,
-  ]);
+  const databaseUrl = pickDatabaseUrl();
+  const directUrl = pickDirectUrl(databaseUrl);
 
-  const direct = firstPostgresUrl([
-    process.env.DIRECT_URL,
-    process.env.POSTGRES_URL_NON_POOLING,
-    process.env.POSTGRES_URL,
-    pooled,
-  ]);
-
-  if (pooled) process.env.DATABASE_URL = pooled;
-  if (direct) process.env.DIRECT_URL = direct;
+  if (databaseUrl) process.env.DATABASE_URL = databaseUrl;
+  if (directUrl) process.env.DIRECT_URL = directUrl;
 }
 
+loadDatabaseEnvFiles();
 ensureDatabaseEnv();
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
 function createPrismaClient(): PrismaClient {
-  const databaseUrl = process.env.DATABASE_URL;
+  const databaseUrl = pickDatabaseUrl();
   if (!databaseUrl) {
     throw new Error(
-      "DATABASE_URL is not set. Add a PostgreSQL connection string to your environment.",
+      "No PostgreSQL connection string found. Set DATABASE_URL in Vercel " +
+        "(or connect Prisma Postgres via Storage). Expected a postgres:// or " +
+        "postgresql:// URL — not file:./dev.db or localhost.",
     );
   }
 
