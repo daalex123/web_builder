@@ -40,11 +40,22 @@ export default function PublishPage() {
 
     const data = await res.json();
     if (res.ok) {
+      const deployNote =
+        data.mode === "vercel"
+          ? data.deployTriggered
+            ? " Web site redeploy triggered."
+            : " Redeploy the web project (or set VERCEL_WEB_DEPLOY_HOOK_URL) to update the live site."
+          : build
+            ? " Static HTML rebuilt."
+            : "";
+
       setResult({
         type: "success",
-        message: `Published ${data.pages} pages to static site.${
-          build ? " Static HTML rebuilt." : ""
-        }`,
+        message: `Published ${data.pages} pages.${
+          data.mode === "vercel"
+            ? " Content saved to database."
+            : " Exported to apps/web/content/."
+        }${deployNote}`,
       });
       loadLogs();
     } else {
@@ -77,8 +88,9 @@ export default function PublishPage() {
         <Typography.Title level={5}>Production deploy</Typography.Title>
         <Typography.Paragraph>
           This exports all <Typography.Text strong>published</Typography.Text> pages from
-          the database to <Typography.Text code>apps/web/content/</Typography.Text> and optionally
-          rebuilds the static HTML site.
+          the database. Locally, files are written to{" "}
+          <Typography.Text code>apps/web/content/</Typography.Text>. On Vercel, content is
+          saved to the database and the web project build pulls it from there.
         </Typography.Paragraph>
 
         <Space style={{ marginTop: 16 }}>

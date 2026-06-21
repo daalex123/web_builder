@@ -68,6 +68,12 @@ model PublishLog {
   createdAt DateTime @default(now())
 }
 
+model PublishSnapshot {
+  id        String   @id @default("latest")
+  data      String
+  updatedAt DateTime @updatedAt
+}
+
 model Product {
   id               String   @id @default(cuid())
   slug             String   @unique

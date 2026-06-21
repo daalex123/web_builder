@@ -18,7 +18,8 @@ function isPostgresUrl(value: string | undefined): value is string {
 
 function envVar(name: string): string | undefined {
   const value = process.env[name];
-  return value?.trim() ? value : undefined;
+  if (!value?.trim()) return undefined;
+  return isPostgresUrl(value) ? value : undefined;
 }
 
 function loadDatabaseEnvFiles(): void {
@@ -39,11 +40,11 @@ function loadDatabaseEnvFiles(): void {
 
 function pickDatabaseUrl(): string | undefined {
   const candidates = [
-    envVar("DATABASE_URL"),
     envVar("POSTGRES_PRISMA_URL"),
     envVar("PRISMA_DATABASE_URL"),
-    envVar("new_DATABASE_URL"),
     envVar("new_PRISMA_DATABASE_URL"),
+    envVar("DATABASE_URL"),
+    envVar("new_DATABASE_URL"),
     envVar("POSTGRES_URL"),
     envVar("new_POSTGRES_URL"),
     envVar("DIRECT_URL"),

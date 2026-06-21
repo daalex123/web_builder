@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { promisify } from "util";
 import { NextResponse } from "next/server";
-import { exportContentToDisk, prisma } from "@cms/db";
+import { buildPublishedContent, prisma, publishContent } from "@cms/db";
 import { getWebContentDir } from "@/lib/utils";
 
 const execAsync = promisify(exec);
@@ -21,12 +21,45 @@ function getBuildEnv(): NodeJS.ProcessEnv {
   };
 }
 
+async function triggerWebDeploy(): Promise<boolean> {
+  const hook = process.env.VERCEL_WEB_DEPLOY_HOOK_URL?.trim();
+  if (!hook) return false;
+  const response = await fetch(hook, { method: "POST" });
+  return response.ok;
+}
+
 export async function POST(request: Request) {
   const { build = true } = await request.json().catch(() => ({ build: true }));
 
   try {
+    const content = await buildPublishedContent();
+    if (!content) {
+      throw new Error("Site settings not configured");
+    }
+
+    if (process.env.VERCEL) {
+      await publishContent(content);
+      const deployTriggered = build ? await triggerWebDeploy() : false;
+
+      await prisma.publishLog.create({
+        data: {
+          status: "success",
+          message: `Published ${content.pages.length} pages to database${
+            deployTriggered ? " and triggered web deploy" : ""
+          }`,
+        },
+      });
+
+      return NextResponse.json({
+        ok: true,
+        pages: content.pages.length,
+        mode: "vercel",
+        deployTriggered,
+      });
+    }
+
     const contentDir = getWebContentDir();
-    const content = await exportContentToDisk(contentDir);
+    await publishContent(content, contentDir);
 
     let buildOutput = "";
     if (build) {
@@ -55,6 +88,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ok: true,
       pages: content.pages.length,
+      mode: "local",
       buildOutput: build ? buildOutput.slice(-500) : undefined,
     });
   } catch (error) {

@@ -13,6 +13,7 @@
     "db:push": "prisma db push",
     "db:seed": "tsx --env-file=.env prisma/seed.ts",
     "db:studio": "prisma studio",
+    "content:export": "tsx --env-file=.env scripts/export-snapshot.ts",
     "dev:all": "npm --prefix ../.. run dev:all",
     "dev:admin": "npm --prefix ../.. run dev:admin",
     "dev:web": "npm --prefix ../.. run dev:web"

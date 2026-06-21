@@ -10,7 +10,7 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ["antd", "@ant-design/icons"],
   },
-  serverExternalPackages: ["pg", "@prisma/adapter-pg"],
+  serverExternalPackages: ["pg", "@prisma/adapter-pg", "@vercel/blob"],
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,

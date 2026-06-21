@@ -19,6 +19,13 @@ const nextConfig = {
     };
     return config;
   },
+  turbopack: {
+    resolveAlias: {
+      "@cms/shared": "../../packages/shared/src",
+      "@cms/shared/page-layouts": "../../packages/shared/src/page-layouts/index.tsx",
+      "@cms/shared/navigation": "../../packages/shared/src/navigation/index.ts",
+    },
+  },
 };
 
 export default nextConfig;
