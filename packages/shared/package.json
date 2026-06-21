@@ -11,6 +11,7 @@
     "./schemas": "./src/schemas.ts",
     "./ecommerce": "./src/ecommerce.ts",
     "./assistant": "./src/assistant.ts",
+    "./cms-assistant": "./src/cms-assistant.ts",
     "./theme-presets": "./src/theme-presets/index.ts",
     "./theme-presets/options": "./src/theme-presets/options.ts",
     "./page-layouts": "./src/page-layouts/index.tsx",

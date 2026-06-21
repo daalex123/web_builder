@@ -14,12 +14,14 @@ import {
   LogoutOutlined,
   MenuOutlined,
   PictureOutlined,
+  QuestionCircleOutlined,
   RobotOutlined,
   SettingOutlined,
   ShoppingOutlined,
   SkinOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, Typography } from "antd";
+import { CmsAssistantDrawer } from "./cms-assistant-drawer";
 
 const { Sider, Content, Header } = Layout;
 
@@ -27,6 +29,7 @@ const baseNavItems = [
   { key: "/dashboard", icon: <DashboardOutlined />, label: <Link href="/dashboard">Dashboard</Link> },
   { key: "/pages", icon: <FileTextOutlined />, label: <Link href="/pages">Pages</Link> },
   { key: "/ai-page-builder", icon: <RobotOutlined />, label: <Link href="/ai-page-builder">AI Builder</Link> },
+  { key: "/cms-assistant", icon: <QuestionCircleOutlined />, label: <Link href="/cms-assistant">CMS Guide</Link> },
   { key: "/templates", icon: <LayoutOutlined />, label: <Link href="/templates">Templates</Link> },
   { key: "/media", icon: <PictureOutlined />, label: <Link href="/media">Media</Link> },
   { key: "/menus", icon: <MenuOutlined />, label: <Link href="/menus">Menus</Link> },
@@ -145,6 +148,7 @@ export function AdminShell({
         </Header>
         <Content style={{ margin: 24, minHeight: 280 }}>{children}</Content>
       </Layout>
+      <CmsAssistantDrawer />
     </Layout>
   );
 }

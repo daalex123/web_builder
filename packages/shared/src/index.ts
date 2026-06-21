@@ -1,6 +1,7 @@
 export * from "./schemas";
 export * from "./ecommerce";
 export * from "./assistant";
+export * from "./cms-assistant";
 export * from "./layouts";
 export * from "./sample-templates";
 export * from "./theme-presets";

@@ -30,6 +30,9 @@ export function detectAiProvider(apiKey: string): AiProvider {
 /** Default chat model — sales assistant only (not used by page builder). */
 export const DEFAULT_ASSISTANT_AI_MODEL = "meta/llama-3.1-8b-instruct";
 
+/** Default model for admin CMS guide chat. */
+export const DEFAULT_CMS_ASSISTANT_AI_MODEL = "gpt-4o-mini";
+
 /**
  * AI config for sales-assistant chat only.
  * Uses ASSISTANT_AI_MODEL — never AI_MODEL.
@@ -50,6 +53,32 @@ export function getAssistantAiConfig(): Pick<
     temperature: 0.7,
     topP: base.topP,
     maxTokens: 1024,
+  };
+}
+
+/**
+ * AI config for admin CMS guide chat.
+ * Uses CMS_ASSISTANT_AI_MODEL, then ASSISTANT_AI_MODEL, then a sensible default.
+ */
+export function getCmsAssistantAiConfig(): Pick<
+  AiConfig,
+  "apiKey" | "baseUrl" | "model" | "provider" | "temperature" | "topP" | "maxTokens"
+> {
+  const base = getAiConfig();
+  const provider = base.provider;
+  const model =
+    process.env.CMS_ASSISTANT_AI_MODEL?.trim() ||
+    process.env.ASSISTANT_AI_MODEL?.trim() ||
+    (provider === "nvidia" ? DEFAULT_ASSISTANT_AI_MODEL : DEFAULT_CMS_ASSISTANT_AI_MODEL);
+
+  return {
+    apiKey: base.apiKey,
+    baseUrl: base.baseUrl,
+    provider,
+    model,
+    temperature: 0.5,
+    topP: base.topP,
+    maxTokens: 2048,
   };
 }
 

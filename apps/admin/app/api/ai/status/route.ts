@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAssistantAiConfig } from "@/lib/ai/config";
+import { getAssistantAiConfig, getCmsAssistantAiConfig } from "@/lib/ai/config";
 import { getAiStatus } from "@/lib/ai/generate";
 
 export async function GET() {
@@ -9,8 +9,10 @@ export async function GET() {
   }
 
   const assistant = getAssistantAiConfig();
+  const cmsAssistant = getCmsAssistantAiConfig();
   return NextResponse.json({
     ...status,
     assistantModel: assistant.model,
+    cmsAssistantModel: cmsAssistant.model,
   });
 }
