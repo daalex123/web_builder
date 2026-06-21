@@ -6,6 +6,7 @@
     "packages/*"
   ],
   "scripts": {
+    "postinstall": "npm run db:generate --workspace=@cms/db",
     "dev": "npm run dev --workspace=@cms/web",
     "dev:all": "npm run dev:admin & npm run dev:web",
     "dev:admin": "npm run dev --workspace=@cms/admin",
