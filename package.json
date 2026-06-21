@@ -12,7 +12,7 @@
     "dev:admin": "npm run dev --workspace=@cms/admin",
     "dev:web": "npm run dev --workspace=@cms/web",
     "build": "npm run build --workspace=@cms/web",
-    "build:admin": "npm run build --workspace=@cms/admin",
+    "build:admin": "npm run db:generate && npm run build --workspace=@cms/admin",
     "serve": "npm run serve --workspace=@cms/web",
     "db:generate": "npm run db:generate --workspace=@cms/db",
     "db:push": "npm run db:push --workspace=@cms/db",
