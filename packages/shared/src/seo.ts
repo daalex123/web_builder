@@ -15,7 +15,12 @@ export function resolveSiteUrl(url: string | undefined): string {
   }
 
   const fromEnv =
-    typeof process !== "undefined" ? process.env.NEXT_PUBLIC_SITE_URL?.trim() : undefined;
+    typeof process !== "undefined"
+      ? (
+          process.env.NEXT_PUBLIC_WEB_URL?.trim() ||
+          process.env.NEXT_PUBLIC_SITE_URL?.trim()
+        )
+      : undefined;
   if (fromEnv) {
     try {
       const withProtocol = /^https?:\/\//i.test(fromEnv) ? fromEnv : `https://${fromEnv}`;

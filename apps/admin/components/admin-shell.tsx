@@ -22,6 +22,7 @@ import {
 } from "@ant-design/icons";
 import { Button, Layout, Menu, Typography } from "antd";
 import { CmsAssistantDrawer } from "./cms-assistant-drawer";
+import { getWebPreviewUrl } from "@/lib/utils";
 
 const { Sider, Content, Header } = Layout;
 
@@ -142,7 +143,7 @@ export function AdminShell({
           }}
         >
           <Typography.Text type="secondary">Manage your static website content</Typography.Text>
-          <Button type="link" href={process.env.NEXT_PUBLIC_WEB_URL ?? "http://localhost:3000"} target="_blank">
+          <Button type="link" href={getWebPreviewUrl()} target="_blank">
             View live preview
           </Button>
         </Header>

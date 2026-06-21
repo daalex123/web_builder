@@ -73,12 +73,34 @@ function pickDirectUrl(fallback?: string): string | undefined {
   return direct ?? candidates[0];
 }
 
+function normalizePgConnectionString(url: string): string {
+  try {
+    const parsed = new URL(url);
+    const sslmode = parsed.searchParams.get("sslmode");
+    if (
+      !sslmode ||
+      sslmode === "require" ||
+      sslmode === "prefer" ||
+      sslmode === "verify-ca"
+    ) {
+      parsed.searchParams.set("sslmode", "verify-full");
+    }
+    return parsed.toString();
+  } catch {
+    return url;
+  }
+}
+
 function ensureDatabaseEnv(): void {
   const databaseUrl = pickDatabaseUrl();
   const directUrl = pickDirectUrl(databaseUrl);
 
-  if (databaseUrl) process.env.DATABASE_URL = databaseUrl;
-  if (directUrl) process.env.DIRECT_URL = directUrl;
+  if (databaseUrl) {
+    process.env.DATABASE_URL = normalizePgConnectionString(databaseUrl);
+  }
+  if (directUrl) {
+    process.env.DIRECT_URL = normalizePgConnectionString(directUrl);
+  }
 }
 
 loadDatabaseEnvFiles();
@@ -96,7 +118,9 @@ function createPrismaClient(): PrismaClient {
     );
   }
 
-  const adapter = new PrismaPg({ connectionString: databaseUrl });
+  const adapter = new PrismaPg({
+    connectionString: normalizePgConnectionString(databaseUrl),
+  });
   return new PrismaClient({
     adapter,
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],

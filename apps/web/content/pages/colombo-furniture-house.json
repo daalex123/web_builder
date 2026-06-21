@@ -2,67 +2,7 @@
   "slug": "colombo-furniture-house",
   "title": "Colombo Furniture House",
   "template": "page",
-  "layout": "landing",
-  "sections": [
-    {
-      "id": "hero-1",
-      "type": "hero",
-      "title": "Welcome to Colombo Furniture House",
-      "subtitle": "Your destination for quality furniture.",
-      "ctaLabel": "Shop Now",
-      "ctaHref": "/shop/"
-    },
-    {
-      "id": "featured-categories",
-      "type": "features",
-      "items": [
-        {
-          "title": "Dining Room",
-          "body": "Elegant dining sets that enhance your dining experience."
-        },
-        {
-          "title": "Living Room",
-          "body": "Comfortable and stylish sofas and coffee tables."
-        },
-        {
-          "title": "Bedroom",
-          "body": "Cozy beds and storage solutions for a peaceful retreat."
-        }
-      ]
-    },
-    {
-      "id": "limited-time-deals",
-      "type": "cta",
-      "title": "Limited Time Offers",
-      "body": "Don't miss out on our exclusive discounts!",
-      "buttonLabel": "View Deals",
-      "buttonHref": "/deals/"
-    },
-    {
-      "id": "best-sellers",
-      "type": "gallery",
-      "images": [
-        {
-          "src": "/uploads/placeholder.jpg",
-          "alt": "Pebble Coffee Table"
-        },
-        {
-          "src": "/uploads/placeholder.jpg",
-          "alt": "Venice Coffee Table"
-        },
-        {
-          "src": "/uploads/placeholder.jpg",
-          "alt": "Pebble Sofa Set"
-        }
-      ]
-    },
-    {
-      "id": "about-us",
-      "type": "text",
-      "heading": "About Colombo Furniture House",
-      "body": "At Colombo Furniture House, we believe in providing high-quality, stylish furniture that fits every budget. With a focus on sustainable materials and craftsmanship, we aim to create pieces that you'll cherish for years."
-    }
-  ],
+  "layout": "standard",
   "content": {
     "type": "doc",
     "content": []

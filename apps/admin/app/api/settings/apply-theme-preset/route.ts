@@ -8,6 +8,7 @@ import {
   upsertSiteSettings,
 } from "@cms/db";
 import { syncPreviewContent } from "@/lib/preview-sync";
+import { getWebPreviewUrl } from "@/lib/utils";
 
 export async function POST(request: Request) {
   const { themeId } = await request.json();
@@ -28,7 +29,7 @@ export async function POST(request: Request) {
   const settings: SiteSettings = {
     name: preset.site.name ?? current?.name ?? "My Site",
     description: preset.site.description ?? current?.description ?? "",
-    url: current?.url ?? "http://localhost:3000",
+    url: current?.url ?? getWebPreviewUrl(),
     theme: themeId,
     logo: current?.logo,
     defaultSeo: preset.site.defaultSeo ?? current?.defaultSeo,

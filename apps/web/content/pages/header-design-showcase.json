@@ -1,0 +1,83 @@
+{
+  "slug": "header-design-showcase",
+  "title": "Header Design Showcase",
+  "template": "page",
+  "layout": "landing",
+  "sections": [
+    {
+      "id": "sec_hero_1",
+      "type": "hero",
+      "title": "Headers That Convert",
+      "subtitle": "First impressions happen in milliseconds. Craft a header that communicates value instantly and drives action.",
+      "image": "/uploads/placeholder.jpg",
+      "ctaLabel": "View Examples",
+      "ctaHref": "#examples"
+    },
+    {
+      "id": "sec_features_1",
+      "type": "features",
+      "items": [
+        {
+          "title": "Clear Value Proposition",
+          "body": "Headlines that answer \"what, who, why\" in under 5 seconds."
+        },
+        {
+          "title": "Visual Hierarchy",
+          "body": "Typography and spacing that guide the eye to the CTA naturally."
+        },
+        {
+          "title": "Responsive by Default",
+          "body": "Fluid layouts that look sharp on mobile, tablet, and desktop."
+        },
+        {
+          "title": "Accessibility First",
+          "body": "Semantic HTML, contrast ratios, and focus states built in."
+        }
+      ]
+    },
+    {
+      "id": "sec_divider_1",
+      "type": "divider",
+      "variant": "dots"
+    },
+    {
+      "id": "sec_text_1",
+      "type": "text",
+      "heading": "Header Anatomy",
+      "body": "A high-performing header combines four core elements: a compelling headline that states the primary benefit, a supporting subhead that adds context or credibility, a primary call-to-action with clear action language, and a visual element (illustration, photo, or product shot) that reinforces the message. Keep navigation minimal — logo and one key link — to reduce decision fatigue."
+    },
+    {
+      "id": "sec_cta_1",
+      "type": "cta",
+      "title": "Ready to Refresh Your Header?",
+      "body": "Our design system includes 12 production-ready header variants. Pick one, customize, and ship today.",
+      "buttonLabel": "Get the Kit",
+      "buttonHref": "/design-system/headers"
+    },
+    {
+      "id": "sec_testimonials_1",
+      "type": "testimonials",
+      "heading": "What Teams Say",
+      "items": [
+        {
+          "quote": "Swapping our old header for the new variant lifted demo requests by 23% in the first week.",
+          "author": "Mara Chen",
+          "role": "Growth Lead, Velocity"
+        },
+        {
+          "quote": "The accessibility audit passed on first try. Dark mode, focus states, reduced motion — all handled.",
+          "author": "Jonas Weber",
+          "role": "Frontend Engineer, Apex"
+        }
+      ]
+    }
+  ],
+  "content": {
+    "type": "doc",
+    "content": []
+  },
+  "seo": {
+    "metaTitle": "Header Design Showcase — Modern Hero Sections",
+    "metaDescription": "Explore striking header designs with bold typography, immersive imagery, and clear calls to action. Built for conversion."
+  }
+}

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Alert, Button, Card, List, Space, Typography } from "antd";
 import { CloudUploadOutlined, ExportOutlined } from "@ant-design/icons";
 import { PageHeader } from "@/components/page-header";
+import { getWebPreviewUrl } from "@/lib/utils";
 
 type PublishLog = {
   id: string;
@@ -67,7 +68,7 @@ export default function PublishPage() {
           <Typography.Text code>apps/web/content/</Typography.Text> — refresh the browser to see
           changes. No build required.
         </Typography.Paragraph>
-        <Button type="link" href={process.env.NEXT_PUBLIC_WEB_URL ?? "http://localhost:3000"} target="_blank" style={{ padding: 0 }}>
+        <Button type="link" href={getWebPreviewUrl()} target="_blank" style={{ padding: 0 }}>
           Open preview site →
         </Button>
       </Card>

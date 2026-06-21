@@ -23,17 +23,29 @@ export function slugify(text: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-const WEB_URL = process.env.NEXT_PUBLIC_WEB_URL ?? "http://localhost:3000";
-
 /** Preview URL in admin — served from this app's /uploads route */
 export function getMediaUrl(path: string) {
   if (path.startsWith("http")) return path;
   return path.startsWith("/") ? path : `/${path}`;
 }
 
+const DEFAULT_WEB_PREVIEW_URL = "http://localhost:3000";
+
+/** Public site URL for live preview links (set NEXT_PUBLIC_WEB_URL on Vercel). */
+export function getWebPreviewUrl(): string {
+  const fromEnv = process.env.NEXT_PUBLIC_WEB_URL?.trim();
+  if (!fromEnv) return DEFAULT_WEB_PREVIEW_URL;
+
+  const withProtocol = /^https?:\/\//i.test(fromEnv)
+    ? fromEnv
+    : `https://${fromEnv}`;
+
+  return withProtocol.replace(/\/$/, "");
+}
+
 /** Public site URL for copying into content (served from apps/web) */
 export function getPublicMediaUrl(path: string) {
   if (path.startsWith("http")) return path;
   const normalized = path.startsWith("/") ? path : `/${path}`;
-  return `${WEB_URL.replace(/\/$/, "")}${normalized}`;
+  return `${getWebPreviewUrl()}${normalized}`;
 }

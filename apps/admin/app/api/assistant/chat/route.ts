@@ -8,10 +8,11 @@ import {
 import { dbProductToExport, getSiteSettings, listProducts } from "@cms/db";
 import { isAiConfigured } from "@/lib/ai/generate";
 import { completeChat } from "@/lib/ai/chat";
+import { getWebPreviewUrl } from "@/lib/utils";
 
 function corsHeaders(origin: string | null) {
   const allowed =
-    process.env.NEXT_PUBLIC_WEB_URL?.trim() ||
+    getWebPreviewUrl() ||
     process.env.ASSISTANT_CORS_ORIGIN?.trim() ||
     origin ||
     "*";

@@ -1,0 +1,74 @@
+{
+  "slug": "main-navigation",
+  "title": "Main Navigation",
+  "template": "page",
+  "layout": "landing",
+  "sections": [
+    {
+      "id": "nav-hero",
+      "type": "hero",
+      "title": "New Main Navigation",
+      "subtitle": "Streamlined site architecture for better discoverability and user flow.",
+      "ctaLabel": "View Live Site",
+      "ctaHref": "/"
+    },
+    {
+      "id": "nav-overview",
+      "type": "text",
+      "heading": "Navigation Hierarchy",
+      "body": "The new main navigation organizes content into six primary categories, each with clear sub-sections. This structure reduces cognitive load and aligns with user mental models."
+    },
+    {
+      "id": "nav-items",
+      "type": "features",
+      "items": [
+        {
+          "title": "Home",
+          "body": "Dashboard with personalized content, quick actions, and key metrics."
+        },
+        {
+          "title": "Products",
+          "body": "Browseable catalog with filters, categories, and featured collections."
+        },
+        {
+          "title": "Solutions",
+          "body": "Industry-specific solutions, use cases, and implementation guides."
+        },
+        {
+          "title": "Resources",
+          "body": "Documentation, blog, webinars, case studies, and support center."
+        },
+        {
+          "title": "Pricing",
+          "body": "Transparent plans, comparison table, FAQ, and custom quote request."
+        },
+        {
+          "title": "Company",
+          "body": "About us, leadership, careers, press, partners, and contact."
+        }
+      ]
+    },
+    {
+      "id": "nav-design",
+      "type": "text",
+      "heading": "Design Principles",
+      "body": "• Consistent labeling across all touchpoints\n• Mobile-first responsive behavior\n• Accessible keyboard navigation and ARIA labels\n• Mega-menu for desktop with logical grouping\n• Persistent search and user account access"
+    },
+    {
+      "id": "nav-cta",
+      "type": "cta",
+      "title": "Implement Navigation Updates",
+      "body": "Ready to deploy the new navigation across all properties? Coordinate with the frontend team for a phased rollout.",
+      "buttonLabel": "Start Rollout",
+      "buttonHref": "/admin/navigation/deploy"
+    }
+  ],
+  "content": {
+    "type": "doc",
+    "content": []
+  },
+  "seo": {
+    "metaTitle": "Main Navigation Structure",
+    "metaDescription": "Overview of the new main navigation architecture and page hierarchy."
+  }
+}

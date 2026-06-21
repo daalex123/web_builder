@@ -2,52 +2,7 @@
   "slug": "contact-us",
   "title": "Contact Us",
   "template": "page",
-  "layout": "full-width",
-  "sections": [
-    {
-      "id": "sec_1781690866351_3v073x",
-      "type": "columns",
-      "columns": [
-        {
-          "id": "sec_1781694874259_ptmlqq",
-          "title": "New column",
-          "body": "",
-          "widgets": []
-        },
-        {
-          "id": "sec_1781694874259_ha76od",
-          "title": "Column 1",
-          "body": "First column content.",
-          "widgets": [
-            {
-              "id": "sec_1781694953054_4olqxh",
-              "type": "text",
-              "heading": "Section heading",
-              "body": "Write your content here."
-            }
-          ]
-        },
-        {
-          "id": "sec_1781694874259_cdgy95",
-          "title": "Column 2",
-          "body": "Second column content.",
-          "widgets": [
-            {
-              "id": "sec_1781694896178_qsxj59",
-              "type": "image",
-              "src": "/uploads/2026/06/1781524365218-6a438f33750cb9c538ae60091a2ee608.jpg",
-              "alt": "Image"
-            }
-          ]
-        }
-      ],
-      "widths": [
-        33.333333333333336,
-        33.333333333333336,
-        33.333333333333336
-      ]
-    }
-  ],
+  "layout": "standard",
   "content": {
     "type": "doc",
     "content": [
