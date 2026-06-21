@@ -1,4 +1,27 @@
-import { PrismaClient } from "@prisma/client";
+import { config as loadEnv } from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "../generated/prisma/client";
+
+const packageRoot = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+);
+
+function loadDatabaseEnvFiles(): void {
+  if (
+    process.env.DATABASE_URL ||
+    process.env.POSTGRES_PRISMA_URL ||
+    process.env.PRISMA_DATABASE_URL
+  ) {
+    return;
+  }
+
+  loadEnv({ path: path.join(packageRoot, ".env") });
+}
+
+loadDatabaseEnvFiles();
 
 function firstPostgresUrl(values: (string | undefined)[]): string | undefined {
   for (const value of values) {
@@ -33,17 +56,36 @@ function ensureDatabaseEnv(): void {
 
 ensureDatabaseEnv();
 
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
+const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
-const databaseUrl = process.env.DATABASE_URL;
+function createPrismaClient(): PrismaClient {
+  const databaseUrl = process.env.DATABASE_URL;
+  if (!databaseUrl) {
+    throw new Error(
+      "DATABASE_URL is not set. Add a PostgreSQL connection string to your environment.",
+    );
+  }
 
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    ...(databaseUrl
-      ? { datasources: { db: { url: databaseUrl } } }
-      : {}),
+  const adapter = new PrismaPg({ connectionString: databaseUrl });
+  return new PrismaClient({
+    adapter,
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
   });
+}
 
-globalForPrisma.prisma = prisma;
+function getPrismaClient(): PrismaClient {
+  if (!globalForPrisma.prisma) {
+    globalForPrisma.prisma = createPrismaClient();
+  }
+  return globalForPrisma.prisma;
+}
+
+export const prisma = new Proxy({} as PrismaClient, {
+  get(_target, prop) {
+    const client = getPrismaClient();
+    const value = Reflect.get(client, prop, client);
+    return typeof value === "function"
+      ? (value as (...args: unknown[]) => unknown).bind(client)
+      : value;
+  },
+});

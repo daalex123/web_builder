@@ -19,7 +19,7 @@ import {
   resolveHomepageProducts,
   resolvePageSectionProducts,
 } from "@cms/shared";
-import type { Page as PrismaPage } from "@prisma/client";
+import type { Page as PrismaPage } from "../generated/prisma/client";
 import { prisma } from "./client";
 
 function parseJson<T>(value: string | null | undefined, fallback: T): T {

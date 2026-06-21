@@ -8,4 +8,5 @@ dist
 .DS_Store
 *.db-journal
 .vercel
+packages/db/generated
 .env*
