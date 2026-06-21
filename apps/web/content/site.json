@@ -1,0 +1,84 @@
+{
+  "name": "Sustriea",
+  "description": "Interior design studio — spaces that inspire, furniture that endures.",
+  "url": "",
+  "theme": "gravity",
+  "defaultSeo": {
+    "metaTitle": "Gravity — Interior Design",
+    "metaDescription": "Full-service interior design, bespoke furniture, and lighting."
+  },
+  "contact": {
+    "phones": [
+      "+1 (800) 123-4567"
+    ],
+    "email": "hello@gravityinterior.demo",
+    "addresses": [
+      "123 New Lenox, Chicago, IL 60606"
+    ]
+  },
+  "social": {
+    "instagram": "https://instagram.com/gravityinterior"
+  },
+  "homepageSource": "builder",
+  "navigation": {
+    "style": "split",
+    "effect": "transparent",
+    "dropdown": "mega",
+    "showTopBar": false,
+    "topBarText": "hghghghg",
+    "sticky": true,
+    "effects": {
+      "header": {
+        "blurStrength": "lg",
+        "transparency": "none",
+        "shadow": "lg",
+        "transparentNavTone": "dark",
+        "scrolledBackgroundColor": "rgb(242,220,108)",
+        "topOpacity": 0,
+        "scrolledOpacity": 0
+      },
+      "style": {
+        "logoShrink": "medium"
+      }
+    },
+    "activeIndicator": "underline",
+    "logoSize": "2xl",
+    "headerHeight": "default",
+    "linkSize": "sm",
+    "menuStyle": {
+      "color": "rgb(255,255,255)"
+    },
+    "logoMaxWidth": 223,
+    "logoHeight": 120,
+    "containerWidth": "full"
+  },
+  "modules": {
+    "ecommerce": {
+      "enabled": false
+    }
+  },
+  "assistant": {
+    "enabled": true,
+    "name": "Maya",
+    "role": "Design Advisor",
+    "mode": "friendly",
+    "persona": "You are warm, patient, and genuinely curious about the visitor's space and needs. You never hard-sell — you guide people to the right choice and make them feel confident.",
+    "greeting": "Hi there! I'm here to help you find exactly what you're looking for. What brought you in today?",
+    "placeholder": "Ask about products, sizing, delivery…",
+    "conversionGoals": [
+      "Understand the visitor's needs before recommending",
+      "Suggest relevant products from the catalog when appropriate",
+      "Encourage visiting the shop or contact page when ready to buy"
+    ],
+    "suggestedTopics": [
+      "What's popular right now?",
+      "Help me choose for my living room",
+      "Tell me about delivery"
+    ],
+    "primaryCtaLabel": "Browse the shop",
+    "primaryCtaHref": "/shop/",
+    "apiBaseUrl": ""
+  },
+  "logo": "/uploads/2026/06/1782025559089-Untitled_design__7_.png",
+  "logoAlt": "Sustriea"
+}

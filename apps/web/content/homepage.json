@@ -1,0 +1,181 @@
+{
+  "heroSlides": [
+    {
+      "title": "Interiors That Inspire",
+      "subtitle": "Home is where we go for comfort, rest, and inspiration. We design spaces centred around the people who inhabit them.",
+      "ctaLabel": "OUR SERVICES",
+      "ctaHref": "#",
+      "image": "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1600&q=80"
+    },
+    {
+      "title": "Your Personal Inspiration",
+      "subtitle": "Bespoke furniture, lighting, and decoration crafted for your vision.",
+      "ctaLabel": "VIEW PROJECTS",
+      "ctaHref": "#",
+      "image": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80"
+    }
+  ],
+  "features": [
+    {
+      "title": "Interior",
+      "subtitle": "Design"
+    },
+    {
+      "title": "Furniture",
+      "subtitle": "Studio"
+    },
+    {
+      "title": "Lighting",
+      "subtitle": "Design"
+    },
+    {
+      "title": "Bespoke",
+      "subtitle": "Craft"
+    }
+  ],
+  "bestSellerTabs": [
+    "FURNITURE",
+    "DECOR",
+    "LIGHTING"
+  ],
+  "bestSellers": [
+    {
+      "name": "Glass Round Coffee Table",
+      "priceFrom": "$30",
+      "image": "https://images.unsplash.com/photo-1532372586449-031997a68cb5?w=600&q=80",
+      "inStock": true
+    },
+    {
+      "name": "Wicker Lounge Chair",
+      "priceFrom": "$100",
+      "image": "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=600&q=80",
+      "inStock": true
+    },
+    {
+      "name": "Wooden Table Lamp",
+      "priceFrom": "$50",
+      "image": "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600&q=80",
+      "inStock": true,
+      "sale": true
+    },
+    {
+      "name": "Decorative Throw Pillow",
+      "priceFrom": "$10",
+      "image": "https://images.unsplash.com/photo-1600166896085-861adc5e3f97?w=600&q=80",
+      "inStock": true
+    },
+    {
+      "name": "Hanging Lamp Epsilon",
+      "priceFrom": "$30",
+      "image": "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600&q=80",
+      "inStock": true
+    },
+    {
+      "name": "Universal 2 Seater Sofa",
+      "priceFrom": "$55",
+      "image": "https://images.unsplash.com/photo-1493666438817-866a91353ca9?w=600&q=80",
+      "inStock": true
+    }
+  ],
+  "shopTheLook": [
+    {
+      "title": "Furniture",
+      "image": "https://images.unsplash.com/photo-1493666438817-866a91353ca9?w=600&q=80",
+      "href": "#"
+    },
+    {
+      "title": "Interior",
+      "image": "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1600&q=80",
+      "href": "#"
+    },
+    {
+      "title": "Lighting",
+      "image": "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600&q=80",
+      "href": "#"
+    },
+    {
+      "title": "Featured Project",
+      "image": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80",
+      "href": "#"
+    }
+  ],
+  "categorySections": [
+    {
+      "title": "What We Do",
+      "subtitle": "From concept sketches to installation — full-service design and production of lighting, furniture, and home decor.",
+      "ctaLabel": "MAKE AN APPOINTMENT",
+      "ctaHref": "#",
+      "products": [
+        {
+          "name": "Miruna Floor Lamp",
+          "price": "$895",
+          "image": "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600&q=80",
+          "inStock": true
+        },
+        {
+          "name": "IO Coffee Table",
+          "priceFrom": "$695",
+          "image": "https://images.unsplash.com/photo-1532372586449-031997a68cb5?w=600&q=80",
+          "inStock": true,
+          "sale": true
+        },
+        {
+          "name": "Salon Chair",
+          "price": "$525",
+          "image": "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=600&q=80",
+          "inStock": true
+        },
+        {
+          "name": "Wooden Table Lamp",
+          "priceFrom": "$50",
+          "image": "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600&q=80",
+          "inStock": true
+        }
+      ],
+      "productSlugs": [
+        "prod-1"
+      ]
+    }
+  ],
+  "ctaBanner": {
+    "title": "Need a Free Consultation?",
+    "body": "Gravity offers individually designed interiors centered around the people inhabiting the space."
+  },
+  "testimonials": [
+    {
+      "name": "Tina Leona Brooks",
+      "quote": "I wanted to take a moment and extend my appreciation for what you have been doing for us."
+    },
+    {
+      "name": "Emily Annice Griffith",
+      "quote": "It has been an absolute pleasure working with you. You brought our individual styles to life."
+    },
+    {
+      "name": "Patricia Ashlyn Mitchell",
+      "quote": "Our designer listened to our ideas and came up with a complete solution for our apartment."
+    }
+  ],
+  "commitments": [
+    {
+      "title": "Concept",
+      "body": "We help you create a comprehensive design plan with two concepts tailored to your space and needs."
+    },
+    {
+      "title": "Design & Development",
+      "body": "Full design services from inspiration to installation — balancing function and visual appeal."
+    }
+  ],
+  "instagram": {
+    "title": "@gravityinterior",
+    "subtitle": "Follow our latest projects, mood boards, and studio updates.",
+    "ctaLabel": "FOLLOW US",
+    "ctaHref": "#"
+  },
+  "newsletter": {
+    "title": "Stay Tuned — Sign up for our newsletter",
+    "ctaLabel": "SUBSCRIBE"
+  },
+  "bestSellerSlugs": [
+    "prod-1"
+  ]
+}

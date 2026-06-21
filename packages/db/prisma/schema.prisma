@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model SiteSettings {
+  id        String   @id @default("default")
+  data      String
+  updatedAt DateTime @updatedAt
+}
+
+model Homepage {
+  id        String   @id @default("default")
+  data      String
+  updatedAt DateTime @updatedAt
+}
+
+model Page {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  template  String   @default("page")
+  layout    String   @default("standard")
+  sections  String?
+  content   String
+  seo       String?
+  status    String   @default("draft")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PageTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  layout      String   @default("standard")
+  content     String
+  sections    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Media {
+  id        String   @id @default(cuid())
+  filename  String
+  url       String
+  alt       String?
+  mimeType  String
+  size      Int?
+  createdAt DateTime @default(now())
+}
+
+model Menu {
+  id        String   @id @default(cuid())
+  location  String   @unique
+  items     String
+  updatedAt DateTime @updatedAt
+}
+
+model PublishLog {
+  id        String   @id @default(cuid())
+  status    String
+  message   String?
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id               String   @id @default(cuid())
+  slug             String   @unique
+  name             String
+  description      String?
+  shortDescription String?
+  price            String?
+  priceFrom        String?
+  sale             Boolean  @default(false)
+  salePrice        String?
+  image            String
+  gallery          String   @default("[]")
+  category         String?
+  inStock          Boolean  @default(true)
+  seo              String?
+  status           String   @default("draft")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}

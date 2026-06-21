@@ -1,0 +1,49 @@
+{
+  "slug": "product",
+  "title": "Product Name",
+  "template": "page",
+  "layout": "split-hero",
+  "sections": [
+    {
+      "id": "prod-hero",
+      "type": "hero",
+      "title": "The product your workflow needs",
+      "subtitle": "Designed for teams who demand more.",
+      "image": "/uploads/placeholder.jpg",
+      "ctaLabel": "Buy now",
+      "ctaHref": "/shop/"
+    },
+    {
+      "id": "prod-features",
+      "type": "features",
+      "items": [
+        {
+          "title": "Fast",
+          "body": "Built for speed and reliability."
+        },
+        {
+          "title": "Secure",
+          "body": "Enterprise-grade security by default."
+        },
+        {
+          "title": "Simple",
+          "body": "Intuitive interface anyone can use."
+        }
+      ]
+    }
+  ],
+  "content": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "Available now with free shipping on all orders."
+          }
+        ]
+      }
+    ]
+  }
+}

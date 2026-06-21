@@ -1,0 +1,224 @@
+@import "tailwindcss";
+@source "../../../packages/shared/src/**/*.{ts,tsx}";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --muted: #737373;
+  --accent: #171717;
+  --border: #e5e5e5;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-border: var(--border);
+  --font-sans: "Helvetica Neue", Helvetica, Arial, ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+.prose-finez p {
+  @apply mb-4 leading-7 text-neutral-600;
+}
+
+.prose-finez h1 {
+  @apply mb-4 text-4xl font-light tracking-wide text-neutral-900;
+}
+
+.prose-finez h2 {
+  @apply mb-3 mt-8 text-2xl font-light text-neutral-900;
+}
+
+.prose-finez h3 {
+  @apply mb-3 mt-6 text-xl font-medium text-neutral-900;
+}
+
+.prose-finez ul {
+  @apply mb-4 list-disc space-y-2 pl-6 text-neutral-600;
+}
+
+.prose-finez ol {
+  @apply mb-4 list-decimal space-y-2 pl-6 text-neutral-600;
+}
+
+.prose-finez a {
+  @apply text-neutral-900 underline hover:text-neutral-600;
+}
+
+.prose-finez blockquote {
+  @apply mb-4 border-l-4 border-neutral-300 pl-4 italic text-neutral-500;
+}
+
+.prose-furniture p {
+  @apply mb-4 leading-7 text-neutral-600;
+}
+
+.prose-furniture h1 {
+  @apply mb-4 text-4xl font-light tracking-wide text-neutral-900;
+}
+
+.prose-furniture h2 {
+  @apply mb-3 mt-8 text-2xl font-light text-neutral-900;
+}
+
+.prose-furniture h3 {
+  @apply mb-3 mt-6 text-xl font-medium text-neutral-900;
+}
+
+.prose-furniture ul {
+  @apply mb-4 list-disc space-y-2 pl-6 text-neutral-600;
+}
+
+.prose-furniture ol {
+  @apply mb-4 list-decimal space-y-2 pl-6 text-neutral-600;
+}
+
+.prose-furniture a {
+  @apply text-neutral-900 underline hover:text-neutral-600;
+}
+
+.prose-furniture blockquote {
+  @apply mb-4 border-l-4 border-neutral-300 pl-4 italic text-neutral-500;
+}
+
+.prose-content p {
+  @apply mb-4 leading-7 text-gray-700;
+}
+
+/* Advanced slider animations */
+@keyframes cms-ken-burns {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+@keyframes cms-slider-fade-in {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
+}
+@keyframes cms-slider-zoom-in {
+  from { opacity: 0.6; transform: scale(1.06); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes cms-slider-slide-in {
+  from { opacity: 0.7; transform: translateX(4%); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.animate-ken-burns {
+  animation: cms-ken-burns 8s ease-out forwards;
+}
+.animate-slider-fade { animation: cms-slider-fade-in 0.8s ease-out; }
+.animate-slider-zoom { animation: cms-slider-zoom-in 0.9s ease-out; }
+.animate-slider-slide { animation: cms-slider-slide-in 0.7s ease-out; }
+.animate-slider-crossfade { animation: cms-slider-fade-in 1s ease-in-out; }
+
+/* Navigation menu theme (custom colors from admin) */
+.nav-menu-themed .nav-menu-link {
+  color: var(--nav-menu-color, currentColor);
+}
+.nav-menu-themed .nav-menu-link:hover {
+  color: var(--nav-menu-hover, var(--nav-menu-color, currentColor));
+}
+.nav-menu-themed .nav-menu-link[data-active="true"] {
+  color: var(--nav-menu-active, var(--nav-menu-color, currentColor));
+}
+.nav-menu-themed .nav-menu-link.nav-menu-pill-active,
+.nav-menu-themed .nav-menu-link[data-active="true"].nav-menu-pill-active {
+  background-color: var(--nav-menu-active-bg, #171717);
+  color: var(--nav-menu-active, #ffffff);
+}
+
+/* Navigation styles */
+.nav-link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.5rem;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+.nav-link-underline:hover::after,
+.nav-link-underline-active::after {
+  transform: scaleX(1);
+}
+.nav-dropdown-slide {
+  animation: cms-nav-dropdown-in 0.2s ease-out;
+}
+.nav-dropdown-fade {
+  animation: cms-nav-dropdown-fade 0.22s ease-out;
+}
+@keyframes cms-nav-dropdown-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes cms-nav-dropdown-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.nav-drawer-in {
+  animation: cms-nav-drawer-in 0.28s ease-out;
+}
+@keyframes cms-nav-drawer-in {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+.nav-drawer-in-left {
+  animation: cms-nav-drawer-in-left 0.28s ease-out;
+}
+@keyframes cms-nav-drawer-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+/* Link hover effects */
+.nav-hover-lift { transition: transform 0.2s ease, color 0.2s ease; }
+.nav-hover-lift:hover { transform: translateY(-2px); }
+.nav-hover-scale { transition: transform 0.2s ease; }
+.nav-hover-scale:hover { transform: scale(1.05); }
+.nav-logo-hover-fade { transition: opacity 0.25s ease; }
+.nav-logo-hover-fade:hover { opacity: 0.7; }
+.nav-logo-hover-scale { transition: transform 0.25s ease; }
+.nav-logo-hover-scale:hover { transform: scale(1.03); }
+
+/* Logo shrink on scroll */
+.nav-logo-shrink-wrap {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.nav-logo-shrink-subtle.is-shrunk { transform: scale(0.92); }
+.nav-logo-shrink-medium.is-shrunk { transform: scale(0.85); }
+.nav-logo-shrink-strong.is-shrunk { transform: scale(0.78); }
+.nav-underline-thin::after { height: 1px; }
+.nav-underline-thick::after { height: 3px; }
+.nav-pill-outline { border: 1px solid transparent; }
+.nav-pill-outline:not(.bg-neutral-900):hover { border-color: #d4d4d4; }
+.nav-pill-soft:not(.bg-neutral-900) { background: #f5f5f5; }
+
+/* Dropdown item hovers */
+.nav-dropdown-item-highlight:hover { background: #fafafa; }
+.nav-dropdown-item-slide { transition: transform 0.15s ease, background 0.15s ease; }
+.nav-dropdown-item-slide:hover { transform: translateX(4px); background: #fafafa; }
+.nav-dropdown-item-fade { transition: opacity 0.15s ease; }
+.nav-dropdown-item-fade:hover { opacity: 0.75; }
+
+/* Animation speeds */
+.nav-anim-fast { animation-duration: 0.15s !important; }
+.nav-anim-slow { animation-duration: 0.5s !important; }
+.nav-mobile-fade { animation: cms-nav-mobile-fade 0.25s ease-out; }
+.nav-mobile-scale { animation: cms-nav-mobile-scale 0.25s ease-out; }
+@keyframes cms-nav-mobile-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes cms-nav-mobile-scale {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}

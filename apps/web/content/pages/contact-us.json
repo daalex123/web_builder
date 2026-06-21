@@ -1,0 +1,159 @@
+{
+  "slug": "contact-us",
+  "title": "Contact Us",
+  "template": "page",
+  "layout": "full-width",
+  "sections": [
+    {
+      "id": "sec_1781690866351_3v073x",
+      "type": "columns",
+      "columns": [
+        {
+          "id": "sec_1781694874259_ptmlqq",
+          "title": "New column",
+          "body": "",
+          "widgets": []
+        },
+        {
+          "id": "sec_1781694874259_ha76od",
+          "title": "Column 1",
+          "body": "First column content.",
+          "widgets": [
+            {
+              "id": "sec_1781694953054_4olqxh",
+              "type": "text",
+              "heading": "Section heading",
+              "body": "Write your content here."
+            }
+          ]
+        },
+        {
+          "id": "sec_1781694874259_cdgy95",
+          "title": "Column 2",
+          "body": "Second column content.",
+          "widgets": [
+            {
+              "id": "sec_1781694896178_qsxj59",
+              "type": "image",
+              "src": "/uploads/2026/06/1781524365218-6a438f33750cb9c538ae60091a2ee608.jpg",
+              "alt": "Image"
+            }
+          ]
+        }
+      ],
+      "widths": [
+        33.333333333333336,
+        33.333333333333336,
+        33.333333333333336
+      ]
+    }
+  ],
+  "content": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 1
+        },
+        "content": [
+          {
+            "type": "text",
+            "marks": [
+              {
+                "type": "bold"
+              }
+            ],
+            "text": "Redefining Your Space"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "At FINEZ we aim to “redefine your space” through an elaborate collection of contemporary furniture, homeware products, and decorative items."
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "Keeping in line with our promise and legacy, our products are “designed and crafted in Sri Lanka” to provide a winning combination of functionality, aesthetics, style, and comfort to match the countries tropical elements."
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "We are a lifestyle brand inspired to provide an elegant and contemporary living with a commitment to offering high-quality products combined with exclusive designs."
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "Our interior design and projects arm takes pride in breathing life to a range of custom-designed furniture produced to meet the discerning needs of our customers ranging from homeowners, apartment dwellers, and other commercial project stakeholders."
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "Every time you buy a product from FINEZ you are helping us to create value and sustain the livelihoods of many local artisans and designers that are part of our brand."
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "hardBreak"
+          }
+        ]
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "/uploads/2026/06/1781524365218-6a438f33750cb9c538ae60091a2ee608.jpg",
+          "alt": "",
+          "title": null
+        }
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "hardBreak"
+          }
+        ]
+      }
+    ]
+  },
+  "seo": {
+    "metaTitle": "Tets SEO",
+    "metaDescription": "Tets SEO Meta Description",
+    "noIndex": false
+  }
+}

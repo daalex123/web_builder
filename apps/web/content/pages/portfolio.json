@@ -1,0 +1,59 @@
+{
+  "slug": "portfolio",
+  "title": "Portfolio",
+  "template": "page",
+  "layout": "gallery",
+  "sections": [
+    {
+      "id": "sec_1781525992098_pw4n09",
+      "type": "image",
+      "src": "/uploads/2026/06/1781524365218-6a438f33750cb9c538ae60091a2ee608.jpg",
+      "alt": "Image"
+    },
+    {
+      "id": "port-gallery",
+      "type": "gallery",
+      "images": [
+        {
+          "src": "/uploads/placeholder.jpg",
+          "alt": "Project Alpha"
+        },
+        {
+          "src": "/uploads/placeholder.jpg",
+          "alt": "Project Beta"
+        },
+        {
+          "src": "/uploads/placeholder.jpg",
+          "alt": "Project Gamma"
+        },
+        {
+          "src": "/uploads/placeholder.jpg",
+          "alt": "Project Delta"
+        },
+        {
+          "src": "",
+          "alt": ""
+        }
+      ]
+    }
+  ],
+  "content": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "A selection of recent projects across branding, web, and print design."
+          }
+        ]
+      }
+    ]
+  },
+  "seo": {
+    "metaTitle": "Portfolio",
+    "metaDescription": "",
+    "noIndex": false
+  }
+}

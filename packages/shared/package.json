@@ -1,0 +1,37 @@
+{
+  "name": "@cms/shared",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./layouts": "./src/layouts.ts",
+    "./sample-templates": "./src/sample-templates.ts",
+    "./schemas": "./src/schemas.ts",
+    "./ecommerce": "./src/ecommerce.ts",
+    "./assistant": "./src/assistant.ts",
+    "./theme-presets": "./src/theme-presets/index.ts",
+    "./theme-presets/options": "./src/theme-presets/options.ts",
+    "./page-layouts": "./src/page-layouts/index.tsx",
+    "./section-styles": "./src/section-styles.ts",
+    "./section-layout": "./src/section-layout.ts",
+    "./navigation": "./src/navigation/index.ts",
+    "./render-sections": "./src/render-sections.tsx",
+    "./nested-sections": "./src/nested-sections.ts",
+    "./widget-schemas": "./src/widget-schemas.ts",
+    "./widgets/slider": "./src/widgets/slider.tsx",
+    "./widgets/slider-types": "./src/widgets/slider-types.ts",
+    "./widgets/video": "./src/widgets/video.tsx",
+    "./widgets/product-card": "./src/widgets/product-card.tsx",
+    "./widgets/product-slider": "./src/widgets/product-slider.tsx"
+  },
+  "dependencies": {
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "react": "^19.0.0",
+    "typescript": "^5.8.3"
+  }
+}

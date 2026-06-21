@@ -1,0 +1,77 @@
+{
+  "header": [
+    {
+      "label": "HOME",
+      "href": "/"
+    },
+    {
+      "label": "ABOUT",
+      "children": [
+        {
+          "label": "Our Story",
+          "href": "/about-us"
+        },
+        {
+          "label": "Our Team",
+          "href": "#"
+        }
+      ]
+    },
+    {
+      "label": "SERVICES",
+      "href": "#"
+    },
+    {
+      "label": "PORTFOLIO",
+      "href": "#"
+    },
+    {
+      "label": "NEWS",
+      "href": "/blog"
+    },
+    {
+      "label": "CONTACT",
+      "href": "/contact-us"
+    }
+  ],
+  "footer": [
+    {
+      "label": "SERVICES",
+      "children": [
+        {
+          "label": "Interior Design",
+          "href": "#"
+        },
+        {
+          "label": "Furniture",
+          "href": "#"
+        },
+        {
+          "label": "Lighting",
+          "href": "#"
+        },
+        {
+          "label": "Bespoke Design",
+          "href": "#"
+        }
+      ]
+    },
+    {
+      "label": "COMPANY",
+      "children": [
+        {
+          "label": "About",
+          "href": "/about-us"
+        },
+        {
+          "label": "Portfolio",
+          "href": "#"
+        },
+        {
+          "label": "Contact",
+          "href": "/contact-us"
+        }
+      ]
+    }
+  ]
+}
