@@ -1,5 +1,5 @@
 {
-  "slug": "home",
+  "slug": "main",
   "title": "",
   "template": "home",
   "layout": "homepage",
@@ -9,7 +9,7 @@
     "content": []
   },
   "seo": {
-    "metaTitle": "tt1",
+    "metaTitle": "",
     "metaDescription": "",
     "noIndex": false
   }
