@@ -19,6 +19,7 @@ import {
   resolveHomepageProducts,
   resolvePageSectionProducts,
 } from "@cms/shared";
+import type { Page as PrismaPage } from "@prisma/client";
 import { prisma } from "./client";
 
 function parseJson<T>(value: string | null | undefined, fallback: T): T {
@@ -103,7 +104,7 @@ export async function upsertMenu(location: "header" | "footer", items: Menus["he
   });
 }
 
-export async function listPages(status?: string) {
+export async function listPages(status?: string): Promise<PrismaPage[]> {
   return prisma.page.findMany({
     where: status ? { status } : undefined,
     orderBy: { updatedAt: "desc" },
