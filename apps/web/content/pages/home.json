@@ -2,7 +2,8 @@
   "slug": "home",
   "title": "",
   "template": "home",
-  "layout": "standard",
+  "layout": "homepage",
+  "sections": [],
   "content": {
     "type": "doc",
     "content": []
