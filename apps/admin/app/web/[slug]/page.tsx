@@ -8,7 +8,7 @@ import {
 import { InnerPageChrome } from "@cms/shared/navigation";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { loadPreviewContent } from "@preview/preview-content";
+import { loadPreviewContentAsync } from "@preview/preview-content";
 import { PageLayoutRenderer } from "@preview/layouts/index";
 import { getThemeComponents, ThemeShell } from "@preview/themes/index";
 
@@ -20,7 +20,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const content = loadPreviewContent();
+  const content = await loadPreviewContentAsync();
   const page = getPageBySlug(content, slug);
   if (!page) return {};
   return buildPageMetadata(content.site, page);
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function WebPageRoute({ params }: Props) {
   const { slug } = await params;
-  const content = loadPreviewContent();
+  const content = await loadPreviewContentAsync();
   const page = getPageBySlug(content, slug);
 
   if (!page || page.slug === "home") {

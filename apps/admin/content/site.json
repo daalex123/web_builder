@@ -41,11 +41,6 @@
       "style": {
         "logoShrink": "medium",
         "underlineThickness": "medium"
-      },
-      "dropdown": {
-        "shadow": "md",
-        "rounded": "lg",
-        "offset": "sm"
       }
     },
     "activeIndicator": "underline",
@@ -53,38 +48,11 @@
     "headerHeight": "default",
     "linkSize": "sm",
     "menuStyle": {
-      "color": "rgb(255,255,255)",
-      "itemPaddingX": "sm"
+      "color": "rgb(255,255,255)"
     },
     "logoMaxWidth": 223,
     "logoHeight": 120,
-    "containerWidth": "full",
-    "headerMode": "preset",
-    "headerBuilder": {
-      "rows": [
-        {
-          "id": "hrow_1782107370683_vfwlkk",
-          "zones": {
-            "left": [
-              {
-                "id": "hdr_1782107370683_zyba40",
-                "type": "logo",
-                "size": "md"
-              }
-            ],
-            "center": [
-              {
-                "id": "hdr_1782107370683_5ncswt",
-                "type": "menu"
-              }
-            ],
-            "right": []
-          }
-        }
-      ],
-      "showTopRow": false
-    },
-    "megaColumns": "2"
+    "containerWidth": "full"
   },
   "modules": {
     "ecommerce": {

@@ -6,7 +6,6 @@
     "packages/*"
   ],
   "scripts": {
-    "postinstall": "npm run db:generate --workspace=@cms/db",
     "install:local": "node scripts/install.mjs",
     "dev": "npm run dev --workspace=@cms/admin",
     "dev:all": "npm run dev --workspace=@cms/admin",
@@ -15,16 +14,11 @@
     "build": "npm run build --workspace=@cms/web",
     "build:admin": "npm run build --workspace=@cms/admin",
     "serve": "npm run serve --workspace=@cms/web",
-    "db:generate": "npm run db:generate --workspace=@cms/db",
-    "db:push": "npm run db:push --workspace=@cms/db",
     "db:seed": "npm run db:seed --workspace=@cms/db",
-    "setup": "npm run db:generate && npm run db:push && npm run db:seed"
+    "setup": "npm run db:seed"
   },
   "devDependencies": {
     "typescript": "^5.8.3"
-  },
-  "dependencies": {
-    "@prisma/client": "^6.9.0"
   },
   "engines": {
     "node": ">=20.19.0"

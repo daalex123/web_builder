@@ -1,12 +1,12 @@
 export const dynamic = "force-dynamic";
 
-import { listPages, prisma } from "@cms/db";
+import { listPages, getLatestPublishLog } from "@cms/db";
 import { DashboardClient } from "@/components/dashboard-client";
 
 export default async function DashboardPage() {
   const [pages, lastPublish] = await Promise.all([
     listPages(),
-    prisma.publishLog.findFirst({ orderBy: { createdAt: "desc" } }),
+    getLatestPublishLog(),
   ]);
 
   const publishedPages = pages.filter((p) => p.status === "published").length;
@@ -21,7 +21,7 @@ export default async function DashboardPage() {
           ? {
               status: lastPublish.status,
               message: lastPublish.message,
-              createdAt: lastPublish.createdAt.toISOString(),
+              createdAt: lastPublish.createdAt,
             }
           : null,
         draftPagesList: pages

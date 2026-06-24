@@ -6,7 +6,7 @@ import {
   type PageLayout,
 } from "@cms/shared";
 import type { Metadata } from "next";
-import { loadPreviewContent } from "@preview/preview-content";
+import { loadPreviewContentAsync } from "@preview/preview-content";
 import { FinezHomepage } from "@preview/themes/finez/homepage";
 import { FurnitureHomepage } from "@preview/themes/furniture/homepage";
 import { getThemeComponents, ThemeShell } from "@preview/themes/index";
@@ -15,8 +15,8 @@ import { PageLayoutRenderer } from "@preview/layouts/index";
 
 export const dynamic = "force-dynamic";
 
-export function generateMetadata(): Metadata {
-  const content = loadPreviewContent();
+export async function generateMetadata(): Promise<Metadata> {
+  const content = await loadPreviewContentAsync();
   const homePage = getHomePage(content);
   const mode = resolveHomepageRenderMode(content);
 
@@ -31,8 +31,8 @@ export function generateMetadata(): Metadata {
   };
 }
 
-export default function WebHomePage() {
-  const content = loadPreviewContent();
+export default async function WebHomePage() {
+  const content = await loadPreviewContentAsync();
   const homePage = getHomePage(content);
   const { JsonLd } = getThemeComponents(content.site.theme);
   const mode = resolveHomepageRenderMode(content);

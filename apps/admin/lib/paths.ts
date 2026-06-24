@@ -1,3 +1,5 @@
+import { getDeploymentUrl } from "./vercel";
+
 export const ADMIN_BASE = "/admin";
 export const WEB_BASE = "/web";
 
@@ -33,12 +35,9 @@ export function getWebPreviewUrl(): string {
     return withProtocol.replace(/\/$/, "");
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  if (siteUrl) {
-    const withProtocol = /^https?:\/\//i.test(siteUrl)
-      ? siteUrl
-      : `https://${siteUrl}`;
-    return `${withProtocol.replace(/\/$/, "")}${WEB_BASE}`;
+  const deployment = getDeploymentUrl();
+  if (deployment) {
+    return `${deployment}${WEB_BASE}`;
   }
 
   const port = process.env.PORT ?? "3000";

@@ -32,7 +32,7 @@ export function slugify(text: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-/** Preview URL in admin — served from this app's /uploads route */
+/** Resolve a media path or URL for display in the admin UI */
 export function getMediaUrl(path: string) {
   if (path.startsWith("http")) return path;
   return path.startsWith("/") ? path : `/${path}`;

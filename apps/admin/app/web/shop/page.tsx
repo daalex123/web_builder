@@ -1,14 +1,14 @@
 import { isEcommerceEnabled, type Product } from "@cms/shared";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { loadPreviewContent, prefixProductCard, productToCard } from "@preview/preview-content";
+import { loadPreviewContentAsync, prefixProductCard, productToCard } from "@preview/preview-content";
 import { ThemedProductCard } from "@preview/components/shop/themed-product-card";
 import { getThemeComponents, ThemeShell } from "@preview/themes/index";
 
 export const dynamic = "force-dynamic";
 
-export function generateMetadata(): Metadata {
-  const content = loadPreviewContent();
+export async function generateMetadata(): Promise<Metadata> {
+  const content = await loadPreviewContentAsync();
   if (!isEcommerceEnabled(content.site)) return {};
   return {
     title: `Shop | ${content.site.name}`,
@@ -27,8 +27,8 @@ function groupByCategory(products: Product[]) {
   return groups;
 }
 
-export default function WebShopPage() {
-  const content = loadPreviewContent();
+export default async function WebShopPage() {
+  const content = await loadPreviewContentAsync();
 
   if (!isEcommerceEnabled(content.site)) {
     notFound();

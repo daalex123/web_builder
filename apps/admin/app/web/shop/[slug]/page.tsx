@@ -7,7 +7,7 @@ import {
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { loadPreviewContent } from "@preview/preview-content";
+import { loadPreviewContentAsync } from "@preview/preview-content";
 import { ProductImageGallery } from "@preview/components/shop/product-image-gallery";
 import { getThemeComponents, ThemeShell } from "@preview/themes/index";
 import { webPath } from "@/lib/paths";
@@ -20,7 +20,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const content = loadPreviewContent();
+  const content = await loadPreviewContentAsync();
   if (!isEcommerceEnabled(content.site)) return {};
   const product = getProductBySlug(content, slug);
   if (!product) return {};
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function WebProductPage({ params }: Props) {
   const { slug } = await params;
-  const content = loadPreviewContent();
+  const content = await loadPreviewContentAsync();
 
   if (!isEcommerceEnabled(content.site)) {
     notFound();

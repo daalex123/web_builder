@@ -4,7 +4,7 @@ import {
 } from "@cms/shared/cms-assistant";
 import { isAssistantEnabled } from "@cms/shared/assistant";
 import { isEcommerceEnabled } from "@cms/shared/ecommerce";
-import { getSiteSettings, listPages, listProducts, prisma } from "@cms/db";
+import { getSiteSettings, listPages, listProducts, countMedia } from "@cms/db";
 
 export async function loadCmsAssistantContext(
   currentAdminPath?: string,
@@ -13,7 +13,7 @@ export async function loadCmsAssistantContext(
     getSiteSettings(),
     listPages(),
     listProducts(),
-    prisma.media.count(),
+    countMedia(),
   ]);
 
   const publishedPages = pages.filter((p) => p.status === "published");

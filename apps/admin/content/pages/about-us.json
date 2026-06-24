@@ -3,6 +3,14 @@
   "title": "About Us",
   "template": "page",
   "layout": "standard",
+  "sections": [
+    {
+      "id": "sec_1782282056515_0q3314",
+      "type": "image",
+      "src": "https://cquqhtbqiklcjarlauek.supabase.co/storage/v1/object/public/media/2026/06/1782282084356-body-card.png",
+      "alt": ""
+    }
+  ],
   "content": {
     "type": "doc",
     "content": [
@@ -111,6 +119,7 @@
   },
   "seo": {
     "metaTitle": "About Us — My CMS Site",
-    "metaDescription": "Learn about our team and the WordPress-like CMS that publishes SEO-friendly static HTML."
+    "metaDescription": "Learn about our team and the WordPress-like CMS that publishes SEO-friendly static HTML.",
+    "noIndex": false
   }
 }

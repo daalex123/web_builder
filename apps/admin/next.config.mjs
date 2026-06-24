@@ -4,20 +4,26 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const monorepoRoot = path.join(__dirname, "../..");
 const sharedSrc = path.join(monorepoRoot, "packages/shared/src");
-const prismaClient = path.join(monorepoRoot, "node_modules/@prisma/client");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   outputFileTracingRoot: monorepoRoot,
   transpilePackages: ["@cms/db", "@cms/shared"],
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+    ],
+  },
   experimental: {
     optimizePackageImports: ["antd", "@ant-design/icons"],
   },
-  serverExternalPackages: ["@prisma/client"],
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      "@prisma/client": prismaClient,
       "@cms/shared": path.resolve(sharedSrc),
       "@cms/shared/layouts": path.resolve(sharedSrc, "layouts.ts"),
       "@cms/shared/sample-templates": path.resolve(sharedSrc, "sample-templates.ts"),
@@ -43,7 +49,6 @@ const nextConfig = {
   },
   turbopack: {
     resolveAlias: {
-      "@prisma/client": "../../node_modules/@prisma/client",
       "@cms/shared/layouts": "../../packages/shared/src/layouts.ts",
       "@cms/shared/sample-templates": "../../packages/shared/src/sample-templates.ts",
       "@cms/shared/schemas": "../../packages/shared/src/schemas.ts",

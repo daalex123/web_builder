@@ -3,13 +3,19 @@ import fs from "fs";
 import path from "path";
 import { promisify } from "util";
 import { NextResponse } from "next/server";
-import { exportContentToDisk, prisma } from "@cms/db";
+import {
+  buildPublishedContent,
+  createPublishLog,
+  exportContentToDisk,
+  listPublishLogs,
+} from "@cms/db";
 import {
   createPublishZip,
   formatBytes,
   getPublishZipStats,
   getWebAppDir,
 } from "@/lib/publish-export";
+import { canRunStaticBuild, isVercel } from "@/lib/vercel";
 import { getStaticBuildContentDir } from "@/lib/utils";
 
 const execAsync = promisify(exec);
@@ -27,12 +33,34 @@ export async function POST(request: Request) {
   const { build = true } = await request.json().catch(() => ({ build: true }));
 
   try {
+    const content = await buildPublishedContent();
+    if (!content) {
+      throw new Error("Site settings not configured");
+    }
+
+    if (isVercel()) {
+      const message = build
+        ? `Published ${content.pages.length} pages. Live preview is at /web on this deployment.`
+        : `Validated ${content.pages.length} published pages.`;
+
+      await createPublishLog({ status: "success", message });
+
+      return NextResponse.json({
+        ok: true,
+        pages: content.pages.length,
+        vercel: true,
+        buildSkipped: build,
+        message,
+      });
+    }
+
     const contentDir = getStaticBuildContentDir();
-    const content = await exportContentToDisk(contentDir);
+    await exportContentToDisk(contentDir);
 
     let buildOutput = "";
     let zipSize: number | undefined;
-    if (build) {
+
+    if (build && canRunStaticBuild()) {
       const webDir = getWebAppDir();
       const nextDir = path.join(webDir, ".next");
 
@@ -56,31 +84,26 @@ export async function POST(request: Request) {
       ? `Published ${content.pages.length} pages (${zipStats ? formatBytes(zipStats.size) : "zip ready"})`
       : `Exported ${content.pages.length} pages`;
 
-    await prisma.publishLog.create({
-      data: {
-        status: "success",
-        message,
-      },
+    await createPublishLog({
+      status: "success",
+      message,
     });
 
     return NextResponse.json({
       ok: true,
       pages: content.pages.length,
       buildOutput: build ? buildOutput.slice(-500) : undefined,
-      downloadUrl: build ? "/api/publish/download" : undefined,
+      downloadUrl: build && zipStats ? "/api/publish/download" : undefined,
       zipSize,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Publish failed";
-    await prisma.publishLog.create({ data: { status: "error", message } });
+    await createPublishLog({ status: "error", message });
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
 export async function GET() {
-  const logs = await prisma.publishLog.findMany({
-    orderBy: { createdAt: "desc" },
-    take: 10,
-  });
+  const logs = await listPublishLogs(10);
   return NextResponse.json(logs);
 }

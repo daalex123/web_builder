@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import fs from "fs";
 import path from "path";
 import type {
@@ -19,8 +20,16 @@ import {
   resolveHomepageProducts,
   resolvePageSectionProducts,
 } from "@cms/shared";
-import type { Page as PrismaPage } from "@prisma/client";
-import { prisma } from "./client";
+import { getSupabase } from "./supabase";
+import type { DbPage, DbProduct, DbPublishLog } from "./types";
+
+function now(): string {
+  return new Date().toISOString();
+}
+
+function throwOnError(error: { message: string } | null): void {
+  if (error) throw new Error(error.message);
+}
 
 function parseJson<T>(value: string | null | undefined, fallback: T): T {
   if (!value) return fallback;
@@ -61,33 +70,51 @@ function parseSeoField(value: string | null | undefined): Seo | undefined {
 }
 
 export async function getSiteSettings(): Promise<SiteSettings | null> {
-  const row = await prisma.siteSettings.findUnique({ where: { id: "default" } });
-  return row ? parseJson<SiteSettings>(row.data, null as unknown as SiteSettings) : null;
+  const { data, error } = await getSupabase()
+    .from("SiteSettings")
+    .select("data")
+    .eq("id", "default")
+    .maybeSingle();
+  throwOnError(error);
+  return data ? parseJson<SiteSettings>(data.data, null as unknown as SiteSettings) : null;
 }
 
 export async function upsertSiteSettings(data: SiteSettings) {
-  return prisma.siteSettings.upsert({
-    where: { id: "default" },
-    create: { id: "default", data: JSON.stringify(data) },
-    update: { data: JSON.stringify(data) },
-  });
+  const row = { id: "default", data: JSON.stringify(data), updatedAt: now() };
+  const { data: result, error } = await getSupabase()
+    .from("SiteSettings")
+    .upsert(row, { onConflict: "id" })
+    .select()
+    .single();
+  throwOnError(error);
+  return result;
 }
 
 export async function getHomepage(): Promise<Homepage | null> {
-  const row = await prisma.homepage.findUnique({ where: { id: "default" } });
-  return row ? parseJson<Homepage>(row.data, null as unknown as Homepage) : null;
+  const { data, error } = await getSupabase()
+    .from("Homepage")
+    .select("data")
+    .eq("id", "default")
+    .maybeSingle();
+  throwOnError(error);
+  return data ? parseJson<Homepage>(data.data, null as unknown as Homepage) : null;
 }
 
 export async function upsertHomepage(data: Homepage) {
-  return prisma.homepage.upsert({
-    where: { id: "default" },
-    create: { id: "default", data: JSON.stringify(data) },
-    update: { data: JSON.stringify(data) },
-  });
+  const row = { id: "default", data: JSON.stringify(data), updatedAt: now() };
+  const { data: result, error } = await getSupabase()
+    .from("Homepage")
+    .upsert(row, { onConflict: "id" })
+    .select()
+    .single();
+  throwOnError(error);
+  return result;
 }
 
 export async function getMenus(): Promise<Menus> {
-  const rows = await prisma.menu.findMany();
+  const { data, error } = await getSupabase().from("Menu").select("location, items");
+  throwOnError(error);
+  const rows = data ?? [];
   const header = rows.find((r) => r.location === "header");
   const footer = rows.find((r) => r.location === "footer");
   return {
@@ -97,26 +124,61 @@ export async function getMenus(): Promise<Menus> {
 }
 
 export async function upsertMenu(location: "header" | "footer", items: Menus["header"]) {
-  return prisma.menu.upsert({
-    where: { location },
-    create: { location, items: JSON.stringify(items) },
-    update: { items: JSON.stringify(items) },
-  });
+  const { data: existing, error: findError } = await getSupabase()
+    .from("Menu")
+    .select("id")
+    .eq("location", location)
+    .maybeSingle();
+  throwOnError(findError);
+
+  const payload = {
+    location,
+    items: JSON.stringify(items),
+    updatedAt: now(),
+  };
+
+  if (existing?.id) {
+    const { data, error } = await getSupabase()
+      .from("Menu")
+      .update(payload)
+      .eq("id", existing.id)
+      .select()
+      .single();
+    throwOnError(error);
+    return data;
+  }
+
+  const { data, error } = await getSupabase()
+    .from("Menu")
+    .insert({ id: randomUUID(), ...payload })
+    .select()
+    .single();
+  throwOnError(error);
+  return data;
 }
 
-export async function listPages(status?: string): Promise<PrismaPage[]> {
-  return prisma.page.findMany({
-    where: status ? { status } : undefined,
-    orderBy: { updatedAt: "desc" },
-  });
+export async function listPages(status?: string): Promise<DbPage[]> {
+  let query = getSupabase().from("Page").select("*").order("updatedAt", { ascending: false });
+  if (status) query = query.eq("status", status);
+  const { data, error } = await query;
+  throwOnError(error);
+  return (data ?? []) as DbPage[];
 }
 
 export async function getPageById(id: string) {
-  return prisma.page.findUnique({ where: { id } });
+  const { data, error } = await getSupabase().from("Page").select("*").eq("id", id).maybeSingle();
+  throwOnError(error);
+  return data as DbPage | null;
 }
 
 export async function getPageBySlug(slug: string) {
-  return prisma.page.findUnique({ where: { slug } });
+  const { data, error } = await getSupabase()
+    .from("Page")
+    .select("*")
+    .eq("slug", slug)
+    .maybeSingle();
+  throwOnError(error);
+  return data as DbPage | null;
 }
 
 export async function createPage(data: {
@@ -129,18 +191,23 @@ export async function createPage(data: {
   seo?: Seo;
   status?: string;
 }) {
-  return prisma.page.create({
-    data: {
-      slug: data.slug,
-      title: data.title,
-      template: data.template ?? "page",
-      layout: data.layout ?? "standard",
-      sections: data.sections ? JSON.stringify(data.sections) : null,
-      content: JSON.stringify(data.content),
-      seo: data.seo ? JSON.stringify(data.seo) : null,
-      status: data.status ?? "draft",
-    },
-  });
+  const timestamp = now();
+  const row = {
+    id: randomUUID(),
+    slug: data.slug,
+    title: data.title,
+    template: data.template ?? "page",
+    layout: data.layout ?? "standard",
+    sections: data.sections ? JSON.stringify(data.sections) : null,
+    content: JSON.stringify(data.content),
+    seo: data.seo ? JSON.stringify(data.seo) : null,
+    status: data.status ?? "draft",
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  };
+  const { data: result, error } = await getSupabase().from("Page").insert(row).select().single();
+  throwOnError(error);
+  return result as DbPage;
 }
 
 export async function updatePage(
@@ -156,42 +223,53 @@ export async function updatePage(
     status: string;
   }>,
 ) {
-  return prisma.page.update({
-    where: { id },
-    data: {
-      slug: data.slug,
-      title: data.title,
-      template: data.template,
-      layout: data.layout,
-      sections:
-        data.sections === null
-          ? null
-          : data.sections
-            ? JSON.stringify(data.sections)
-            : undefined,
-      content: data.content ? JSON.stringify(data.content) : undefined,
-      seo: data.seo === null ? null : data.seo ? JSON.stringify(data.seo) : undefined,
-      status: data.status,
-    },
-  });
+  const patch: Record<string, unknown> = { updatedAt: now() };
+  if (data.slug !== undefined) patch.slug = data.slug;
+  if (data.title !== undefined) patch.title = data.title;
+  if (data.template !== undefined) patch.template = data.template;
+  if (data.layout !== undefined) patch.layout = data.layout;
+  if (data.sections === null) patch.sections = null;
+  else if (data.sections) patch.sections = JSON.stringify(data.sections);
+  if (data.content) patch.content = JSON.stringify(data.content);
+  if (data.seo === null) patch.seo = null;
+  else if (data.seo) patch.seo = JSON.stringify(data.seo);
+  if (data.status !== undefined) patch.status = data.status;
+
+  const { data: result, error } = await getSupabase()
+    .from("Page")
+    .update(patch)
+    .eq("id", id)
+    .select()
+    .single();
+  throwOnError(error);
+  return result as DbPage;
 }
 
 export async function deletePage(id: string) {
-  return prisma.page.delete({ where: { id } });
+  const { data, error } = await getSupabase().from("Page").delete().eq("id", id).select().single();
+  throwOnError(error);
+  return data as DbPage;
 }
 
 export async function getHomeBuilderPage() {
-  return prisma.page.findFirst({
-    where: { template: "home" },
-    orderBy: { updatedAt: "desc" },
-  });
+  const { data, error } = await getSupabase()
+    .from("Page")
+    .select("*")
+    .eq("template", "home")
+    .order("updatedAt", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  throwOnError(error);
+  return data as DbPage | null;
 }
 
 export async function demoteOtherHomePages(keepId: string) {
-  await prisma.page.updateMany({
-    where: { template: "home", NOT: { id: keepId } },
-    data: { template: "page" },
-  });
+  const { error } = await getSupabase()
+    .from("Page")
+    .update({ template: "page", updatedAt: now() })
+    .eq("template", "home")
+    .neq("id", keepId);
+  throwOnError(error);
 }
 
 export async function ensureHomeBuilderPage() {
@@ -226,7 +304,7 @@ export async function setHomepageSource(source: "builder" | "structured") {
 }
 
 export async function setPageAsHome(pageId: string) {
-  const page = await prisma.page.findUnique({ where: { id: pageId } });
+  const page = await getPageById(pageId);
   if (!page) return null;
 
   await demoteOtherHomePages(pageId);
@@ -240,7 +318,20 @@ export async function setPageAsHome(pageId: string) {
 }
 
 export async function listMedia() {
-  return prisma.media.findMany({ orderBy: { createdAt: "desc" } });
+  const { data, error } = await getSupabase()
+    .from("Media")
+    .select("*")
+    .order("createdAt", { ascending: false });
+  throwOnError(error);
+  return data ?? [];
+}
+
+export async function countMedia(): Promise<number> {
+  const { count, error } = await getSupabase()
+    .from("Media")
+    .select("*", { count: "exact", head: true });
+  throwOnError(error);
+  return count ?? 0;
 }
 
 export async function createMedia(data: {
@@ -250,48 +341,78 @@ export async function createMedia(data: {
   mimeType: string;
   size?: number;
 }) {
-  return prisma.media.create({ data });
+  const row = {
+    id: randomUUID(),
+    filename: data.filename,
+    url: data.url,
+    alt: data.alt ?? null,
+    mimeType: data.mimeType,
+    size: data.size ?? null,
+    createdAt: now(),
+  };
+  const { data: result, error } = await getSupabase().from("Media").insert(row).select().single();
+  throwOnError(error);
+  return result;
 }
 
 export async function deleteMedia(id: string) {
-  return prisma.media.delete({ where: { id } });
+  const { data, error } = await getSupabase().from("Media").delete().eq("id", id).select().single();
+  throwOnError(error);
+  return data;
 }
 
 export async function getMediaById(id: string) {
-  return prisma.media.findUnique({ where: { id } });
+  const { data, error } = await getSupabase().from("Media").select("*").eq("id", id).maybeSingle();
+  throwOnError(error);
+  return data;
 }
 
 export async function updateMedia(
   id: string,
   data: Partial<{ alt: string; filename: string }>,
 ) {
-  return prisma.media.update({ where: { id }, data });
+  const patch: Record<string, string> = {};
+  if (data.alt !== undefined) patch.alt = data.alt;
+  if (data.filename !== undefined) patch.filename = data.filename;
+  const { data: result, error } = await getSupabase()
+    .from("Media")
+    .update(patch)
+    .eq("id", id)
+    .select()
+    .single();
+  throwOnError(error);
+  return result;
 }
 
 export async function duplicatePage(id: string) {
-  const page = await prisma.page.findUnique({ where: { id } });
+  const page = await getPageById(id);
   if (!page) return null;
 
   const baseSlug = `${page.slug}-copy`;
   let slug = baseSlug;
   let counter = 1;
-  while (await prisma.page.findUnique({ where: { slug } })) {
+  while (await getPageBySlug(slug)) {
     slug = `${baseSlug}-${counter}`;
     counter += 1;
   }
 
-  return prisma.page.create({
-    data: {
-      slug,
-      title: `${page.title} (Copy)`,
-      template: page.template,
-      layout: page.layout,
-      sections: page.sections,
-      content: page.content,
-      seo: page.seo,
-      status: "draft",
-    },
-  });
+  const timestamp = now();
+  const row = {
+    id: randomUUID(),
+    slug,
+    title: `${page.title} (Copy)`,
+    template: page.template,
+    layout: page.layout,
+    sections: page.sections,
+    content: page.content,
+    seo: page.seo,
+    status: "draft",
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  };
+  const { data, error } = await getSupabase().from("Page").insert(row).select().single();
+  throwOnError(error);
+  return data as DbPage;
 }
 
 export function dbPageToExport(page: {
@@ -318,7 +439,6 @@ export async function buildPublishedContent(): Promise<SiteContent | null> {
   return buildContentForExport({ includeDrafts: false });
 }
 
-/** Dev preview: includes draft pages so saves are visible without publishing. */
 export async function buildPreviewContent(): Promise<SiteContent | null> {
   return buildContentForExport({ includeDrafts: true });
 }
@@ -331,18 +451,14 @@ async function buildContentForExport(options: {
 
   const menus = await getMenus();
   const rawHomepage = await getHomepage();
-  const pages = await prisma.page.findMany(
-    options.includeDrafts ? undefined : { where: { status: "published" } },
-  );
+  const pages = await listPages(options.includeDrafts ? undefined : "published");
 
   const ecommerceEnabled = isEcommerceEnabled(site);
   let products: Product[] | undefined;
   let homepage = rawHomepage ?? undefined;
 
   if (ecommerceEnabled) {
-    const productRows = await prisma.product.findMany(
-      options.includeDrafts ? undefined : { where: { status: "published" } },
-    );
+    const productRows = await listProducts(options.includeDrafts ? undefined : "published");
     products = productRows.map(dbProductToExport);
     if (homepage) {
       homepage = resolveHomepageProducts(homepage, products);
@@ -434,11 +550,22 @@ export async function exportPreviewContentToDisk(contentDir: string) {
 }
 
 export async function listPageTemplates() {
-  return prisma.pageTemplate.findMany({ orderBy: { updatedAt: "desc" } });
+  const { data, error } = await getSupabase()
+    .from("PageTemplate")
+    .select("*")
+    .order("updatedAt", { ascending: false });
+  throwOnError(error);
+  return data ?? [];
 }
 
 export async function getPageTemplateById(id: string) {
-  return prisma.pageTemplate.findUnique({ where: { id } });
+  const { data, error } = await getSupabase()
+    .from("PageTemplate")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  throwOnError(error);
+  return data;
 }
 
 export async function createPageTemplate(data: {
@@ -448,15 +575,24 @@ export async function createPageTemplate(data: {
   content: ContentDoc;
   sections?: PageSection[];
 }) {
-  return prisma.pageTemplate.create({
-    data: {
-      name: data.name,
-      description: data.description,
-      layout: data.layout ?? "standard",
-      content: JSON.stringify(data.content),
-      sections: data.sections ? JSON.stringify(data.sections) : null,
-    },
-  });
+  const timestamp = now();
+  const row = {
+    id: randomUUID(),
+    name: data.name,
+    description: data.description ?? null,
+    layout: data.layout ?? "standard",
+    content: JSON.stringify(data.content),
+    sections: data.sections ? JSON.stringify(data.sections) : null,
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  };
+  const { data: result, error } = await getSupabase()
+    .from("PageTemplate")
+    .insert(row)
+    .select()
+    .single();
+  throwOnError(error);
+  return result;
 }
 
 export async function updatePageTemplate(
@@ -469,40 +605,61 @@ export async function updatePageTemplate(
     sections: PageSection[] | null;
   }>,
 ) {
-  return prisma.pageTemplate.update({
-    where: { id },
-    data: {
-      name: data.name,
-      description: data.description,
-      layout: data.layout,
-      content: data.content ? JSON.stringify(data.content) : undefined,
-      sections:
-        data.sections === null
-          ? null
-          : data.sections
-            ? JSON.stringify(data.sections)
-            : undefined,
-    },
-  });
+  const patch: Record<string, unknown> = { updatedAt: now() };
+  if (data.name !== undefined) patch.name = data.name;
+  if (data.description !== undefined) patch.description = data.description;
+  if (data.layout !== undefined) patch.layout = data.layout;
+  if (data.content) patch.content = JSON.stringify(data.content);
+  if (data.sections === null) patch.sections = null;
+  else if (data.sections) patch.sections = JSON.stringify(data.sections);
+
+  const { data: result, error } = await getSupabase()
+    .from("PageTemplate")
+    .update(patch)
+    .eq("id", id)
+    .select()
+    .single();
+  throwOnError(error);
+  return result;
 }
 
 export async function deletePageTemplate(id: string) {
-  return prisma.pageTemplate.delete({ where: { id } });
+  const { data, error } = await getSupabase()
+    .from("PageTemplate")
+    .delete()
+    .eq("id", id)
+    .select()
+    .single();
+  throwOnError(error);
+  return data;
 }
 
 export async function listProducts(status?: string) {
-  return prisma.product.findMany({
-    where: status ? { status } : undefined,
-    orderBy: { updatedAt: "desc" },
-  });
+  let query = getSupabase().from("Product").select("*").order("updatedAt", { ascending: false });
+  if (status) query = query.eq("status", status);
+  const { data, error } = await query;
+  throwOnError(error);
+  return (data ?? []) as DbProduct[];
 }
 
 export async function getProductById(id: string) {
-  return prisma.product.findUnique({ where: { id } });
+  const { data, error } = await getSupabase()
+    .from("Product")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  throwOnError(error);
+  return data as DbProduct | null;
 }
 
 export async function getProductBySlug(slug: string) {
-  return prisma.product.findUnique({ where: { slug } });
+  const { data, error } = await getSupabase()
+    .from("Product")
+    .select("*")
+    .eq("slug", slug)
+    .maybeSingle();
+  throwOnError(error);
+  return data as DbProduct | null;
 }
 
 export function dbProductToExport(product: {
@@ -555,24 +712,29 @@ export async function createProduct(data: {
   seo?: Seo | string;
   status?: string;
 }) {
-  return prisma.product.create({
-    data: {
-      slug: data.slug,
-      name: data.name,
-      description: data.description,
-      shortDescription: data.shortDescription,
-      price: data.price,
-      priceFrom: data.priceFrom,
-      sale: data.sale ?? false,
-      salePrice: data.salePrice,
-      image: data.image,
-      gallery: JSON.stringify(data.gallery ?? []),
-      category: data.category,
-      inStock: data.inStock ?? true,
-      seo: serializeSeoForDb(data.seo),
-      status: data.status ?? "draft",
-    },
-  });
+  const timestamp = now();
+  const row = {
+    id: randomUUID(),
+    slug: data.slug,
+    name: data.name,
+    description: data.description ?? null,
+    shortDescription: data.shortDescription ?? null,
+    price: data.price ?? null,
+    priceFrom: data.priceFrom ?? null,
+    sale: data.sale ?? false,
+    salePrice: data.salePrice ?? null,
+    image: data.image,
+    gallery: JSON.stringify(data.gallery ?? []),
+    category: data.category ?? null,
+    inStock: data.inStock ?? true,
+    seo: serializeSeoForDb(data.seo) ?? null,
+    status: data.status ?? "draft",
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  };
+  const { data: result, error } = await getSupabase().from("Product").insert(row).select().single();
+  throwOnError(error);
+  return result as DbProduct;
 }
 
 export async function updateProduct(
@@ -594,27 +756,76 @@ export async function updateProduct(
     status: string;
   }>,
 ) {
-  return prisma.product.update({
-    where: { id },
-    data: {
-      slug: data.slug,
-      name: data.name,
-      description: data.description,
-      shortDescription: data.shortDescription,
-      price: data.price,
-      priceFrom: data.priceFrom,
-      sale: data.sale,
-      salePrice: data.salePrice,
-      image: data.image,
-      gallery: data.gallery ? JSON.stringify(data.gallery) : undefined,
-      category: data.category,
-      inStock: data.inStock,
-      seo: serializeSeoForDb(data.seo),
-      status: data.status,
-    },
-  });
+  const patch: Record<string, unknown> = { updatedAt: now() };
+  if (data.slug !== undefined) patch.slug = data.slug;
+  if (data.name !== undefined) patch.name = data.name;
+  if (data.description !== undefined) patch.description = data.description;
+  if (data.shortDescription !== undefined) patch.shortDescription = data.shortDescription;
+  if (data.price !== undefined) patch.price = data.price;
+  if (data.priceFrom !== undefined) patch.priceFrom = data.priceFrom;
+  if (data.sale !== undefined) patch.sale = data.sale;
+  if (data.salePrice !== undefined) patch.salePrice = data.salePrice;
+  if (data.image !== undefined) patch.image = data.image;
+  if (data.gallery) patch.gallery = JSON.stringify(data.gallery);
+  if (data.category !== undefined) patch.category = data.category;
+  if (data.inStock !== undefined) patch.inStock = data.inStock;
+  if (data.seo !== undefined) patch.seo = serializeSeoForDb(data.seo);
+  if (data.status !== undefined) patch.status = data.status;
+
+  const { data: result, error } = await getSupabase()
+    .from("Product")
+    .update(patch)
+    .eq("id", id)
+    .select()
+    .single();
+  throwOnError(error);
+  return result as DbProduct;
 }
 
 export async function deleteProduct(id: string) {
-  return prisma.product.delete({ where: { id } });
+  const { data, error } = await getSupabase()
+    .from("Product")
+    .delete()
+    .eq("id", id)
+    .select()
+    .single();
+  throwOnError(error);
+  return data as DbProduct;
+}
+
+export async function createPublishLog(data: { status: string; message?: string }) {
+  const row = {
+    id: randomUUID(),
+    status: data.status,
+    message: data.message ?? null,
+    createdAt: now(),
+  };
+  const { data: result, error } = await getSupabase()
+    .from("PublishLog")
+    .insert(row)
+    .select()
+    .single();
+  throwOnError(error);
+  return result as DbPublishLog;
+}
+
+export async function listPublishLogs(limit = 10): Promise<DbPublishLog[]> {
+  const { data, error } = await getSupabase()
+    .from("PublishLog")
+    .select("*")
+    .order("createdAt", { ascending: false })
+    .limit(limit);
+  throwOnError(error);
+  return (data ?? []) as DbPublishLog[];
+}
+
+export async function getLatestPublishLog(): Promise<DbPublishLog | null> {
+  const { data, error } = await getSupabase()
+    .from("PublishLog")
+    .select("*")
+    .order("createdAt", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  throwOnError(error);
+  return data as DbPublishLog | null;
 }

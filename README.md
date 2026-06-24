@@ -8,7 +8,7 @@ WordPress-like CMS with a static HTML front site and an admin dashboard.
 |-----|---------|------|
 | `apps/web` | Static public site (Next.js export) | 3000 |
 | `apps/admin` | CMS admin dashboard | 3001 |
-| `packages/db` | Prisma + SQLite database | — |
+| `packages/db` | Supabase data layer | — |
 | `packages/shared` | Content schemas, SEO, renderer | — |
 
 ## Quick start
@@ -98,34 +98,64 @@ cms/
 │       ├── content/    # JSON content (written on publish)
 │       └── out/        # Generated HTML
 ├── packages/
-│   ├── db/             # Prisma schema + queries
+│   ├── db/             # Supabase queries + seed
 │   └── shared/         # Shared types & utilities
 ```
 
 ## Environment
 
-`apps/admin/.env.local`:
+Copy `apps/admin/.env.example` to `apps/admin/.env.local` and fill in your Supabase credentials.
+
+**Project:** `cquqhtbqiklcjarlauek` → `https://cquqhtbqiklcjarlauek.supabase.co`
 
 ```
-DATABASE_URL="file:./dev.db"
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL="https://cquqhtbqiklcjarlauek.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="..."          # Settings → API
+SUPABASE_SERVICE_ROLE_KEY="..."              # Settings → API (server only)
+SUPABASE_STORAGE_BUCKET="media"
+
 AUTH_SECRET="your-secret"
 ADMIN_PASSWORD="admin123"
-NEXT_PUBLIC_WEB_URL="http://localhost:3000"
-OPENAI_API_KEY="sk-..."   # or NVIDIA nvapi-... key
+NEXT_PUBLIC_WEB_URL="http://localhost:3000/web"
+```
 
-# NVIDIA NIM (optional — auto-detected from nvapi- prefix)
-# AI_API_BASE_URL="https://integrate.api.nvidia.com/v1"
-# AI_MODEL="nvidia/nemotron-3-ultra-550b-a55b"
-# AI_TEMPERATURE="1"
-# AI_TOP_P="0.95"
-# AI_MAX_TOKENS="16384"
-# AI_REASONING_BUDGET="16384"
-# AI_ENABLE_THINKING="true"
+Media uploads go to the **`media`** storage bucket (public read). The CMS stores the full Supabase public URL in the database.
+
+After setting env vars, run:
+
+```bash
+npm install
+npm run db:seed    # seed from apps/web/content
 ```
 
 Optional: set `PREVIEW_SYNC=false` to disable auto-sync on save.
 
-> **Note:** SQLite paths are resolved relative to `packages/db/prisma/` (where `schema.prisma` lives). Use `file:./dev.db` — not a path from the admin app folder.
+## Deploying to Vercel
+
+The admin app (`apps/admin`) is configured for Vercel monorepo deployment.
+
+1. Import the repo in [Vercel](https://vercel.com) and set **Root Directory** to `apps/admin`
+2. Add environment variables (Project → Settings → Environment Variables):
+
+| Variable | Required |
+|----------|----------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Yes |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes |
+| `SUPABASE_SERVICE_ROLE_KEY` | Yes |
+| `SUPABASE_STORAGE_BUCKET` | Yes (`media`) |
+| `AUTH_SECRET` | Yes |
+| `ADMIN_PASSWORD` | Yes |
+
+3. Deploy — `vercel.json` runs `npm install` from the monorepo root
+
+**On Vercel:**
+- **Admin** → `https://your-app.vercel.app/admin`
+- **Live site** → `https://your-app.vercel.app/web` (reads from Supabase, no disk sync)
+- **Media** → Supabase Storage (local `/uploads` is not available)
+- **Static zip export** → run `npm run build` locally; Vercel cannot build `site.zip` in serverless
+
+Optional: set `NEXT_PUBLIC_SITE_URL` to your custom domain if `VERCEL_URL` is not sufficient.
 
 ## Scripts
 
@@ -135,9 +165,8 @@ Optional: set `PREVIEW_SYNC=false` to disable auto-sync on save.
 | `npm run dev:web` | Start live preview dev server |
 | `npm run dev:all` | Start admin + preview together |
 | `npm run build` | Build static public site |
-| `npm run setup` | Init database + seed |
-| `npm run db:studio` | Open Prisma Studio |
+| `npm run setup` | Seed Supabase from content JSON |
 
-## Upgrading to PostgreSQL / Supabase
+## Database
 
-Change `DATABASE_URL` in `packages/db/.env` to your Postgres connection string and update `provider` in `prisma/schema.prisma` from `sqlite` to `postgresql`, then run `npm run db:push`.
+PostgreSQL on Supabase (`cquqhtbqiklcjarlauek`). The app uses `@supabase/supabase-js` via `@cms/db` — no ORM required.

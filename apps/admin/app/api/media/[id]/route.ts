@@ -1,8 +1,6 @@
-import fs from "fs";
-import path from "path";
 import { NextResponse } from "next/server";
 import { deleteMedia, getMediaById, updateMedia } from "@cms/db";
-import { getUploadDir } from "@/lib/utils";
+import { deleteMediaFile } from "@/lib/media-storage";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -27,8 +25,12 @@ export async function DELETE(_request: Request, { params }: Params) {
   const { id } = await params;
   const media = await getMediaById(id);
   if (media) {
-    const filePath = path.join(getUploadDir(), media.url.replace(/^\/uploads\//, ""));
-    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    try {
+      await deleteMediaFile(media.url);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Delete failed";
+      return NextResponse.json({ error: message }, { status: 500 });
+    }
     await deleteMedia(id);
   }
   return NextResponse.json({ ok: true });

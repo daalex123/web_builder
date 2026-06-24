@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
-    "lib": ["ES2017"],
-    "module": "esnext",
+    "target": "ES2022",
+    "module": "ESNext",
     "moduleResolution": "bundler",
     "strict": true,
-    "skipLibCheck": true,
     "esModuleInterop": true,
-    "isolatedModules": true
+    "skipLibCheck": true,
+    "declaration": true,
+    "outDir": "dist"
   },
-  "include": ["src/**/*", "prisma/**/*"]
+  "include": ["src/**/*", "scripts/**/*"]
 }

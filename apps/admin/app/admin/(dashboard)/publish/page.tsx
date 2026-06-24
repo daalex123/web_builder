@@ -68,11 +68,16 @@ export default function PublishPage() {
     if (res.ok) {
       const sizeLabel =
         typeof data.zipSize === "number" ? ` (${formatBytes(data.zipSize)})` : "";
+      const vercelNote = data.vercel
+        ? " On Vercel, the live site is /web on this deployment. Downloadable static zip builds run locally only."
+        : "";
       setResult({
         type: "success",
-        message: build
-          ? `Published ${data.pages} pages. Static HTML rebuilt and compressed${sizeLabel}.`
-          : `Exported ${data.pages} pages to JSON.`,
+        message:
+          data.message ??
+          (build
+            ? `Published ${data.pages} pages. Static HTML rebuilt and compressed${sizeLabel}.${vercelNote}`
+            : `Exported ${data.pages} pages to JSON.${vercelNote}`),
         downloadUrl: data.downloadUrl,
       });
       if (typeof data.zipSize === "number") {
@@ -98,8 +103,7 @@ export default function PublishPage() {
         <Typography.Title level={5}>Live preview (development)</Typography.Title>
         <Typography.Paragraph type="secondary" style={{ marginBottom: 8 }}>
           Live preview is served at <Typography.Text code>/web</Typography.Text> on the same
-          deployment. When you save in admin, content syncs automatically — refresh the browser to
-          see changes. No build required.
+          deployment. Content is read from Supabase — refresh the browser after saving in admin.
         </Typography.Paragraph>
         <Button type="link" href={getWebPreviewUrl()} target="_blank" style={{ padding: 0 }}>
           Open preview site →
@@ -109,11 +113,11 @@ export default function PublishPage() {
       <Card style={{ maxWidth: 720 }}>
         <Typography.Title level={5}>Production deploy</Typography.Title>
         <Typography.Paragraph>
-          This exports all <Typography.Text strong>published</Typography.Text> pages from
-          the database to <Typography.Text code>apps/web/content/</Typography.Text>, rebuilds
-          static HTML to <Typography.Text code>apps/web/out/</Typography.Text>, and creates a
-          compressed <Typography.Text code>site.zip</Typography.Text> you can download and upload
-          to any static host.
+          On Vercel, use <Typography.Text strong>Publish &amp; Build Site</Typography.Text> to mark
+          content as published — your live site is already at{" "}
+          <Typography.Text code>/web</Typography.Text>. For a downloadable static{" "}
+          <Typography.Text code>site.zip</Typography.Text>, run the build locally with{" "}
+          <Typography.Text code>npm run build</Typography.Text> in the monorepo.
         </Typography.Paragraph>
 
         <Space style={{ marginTop: 16 }} wrap>
