@@ -1,13 +1,15 @@
 import type { LayoutShellProps } from "./index";
 
-export function GalleryLayout({ title, body, blocks, sections }: LayoutShellProps) {
+export function GalleryLayout({ title, body, blocks, sections, suppressTitle }: LayoutShellProps) {
   const gallery = sections.find((s) => s.type === "gallery");
 
   return (
     <article className="mx-auto max-w-7xl px-6 py-12">
-      <header className="mb-8 text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-gray-900">{title}</h1>
-      </header>
+      {!suppressTitle ? (
+        <header className="mb-8 text-center">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900">{title}</h1>
+        </header>
+      ) : null}
       {gallery && gallery.type === "gallery" ? (
         <div className="mb-12 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
           {gallery.images.map((img, i) => (

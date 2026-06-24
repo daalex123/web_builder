@@ -31,7 +31,7 @@ export function CmsAssistantDrawer() {
         open={open}
         onClose={() => setOpen(false)}
         extra={
-          <Link href="/cms-assistant">
+          <Link href="/admin/cms-assistant">
             <Button type="link" size="small" onClick={() => setOpen(false)}>
               Open full page
             </Button>

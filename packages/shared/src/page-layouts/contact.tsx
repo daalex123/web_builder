@@ -2,18 +2,18 @@ import { RenderSections } from "../render-sections";
 import { findFirstShowcaseSection } from "./utils";
 import type { LayoutShellProps } from "./index";
 
-export function ContactLayout({ title, body, blocks, sections }: LayoutShellProps) {
+export function ContactLayout({ title, body, blocks, sections, suppressTitle }: LayoutShellProps) {
   const showcase = findFirstShowcaseSection(sections);
 
   return (
     <article>
       {showcase ? (
         <RenderSections sections={[showcase]} layout="full-width" />
-      ) : (
+      ) : !suppressTitle ? (
         <header className="mx-auto max-w-6xl px-6 pb-8 pt-12">
           <h1 className="text-4xl font-bold text-gray-900">{title}</h1>
         </header>
-      )}
+      ) : null}
       <div className="mx-auto max-w-6xl px-6 pb-12">
         <div className="grid gap-10 lg:grid-cols-5">
           <div className="lg:col-span-3">

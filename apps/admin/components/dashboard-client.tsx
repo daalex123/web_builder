@@ -23,7 +23,7 @@ export function DashboardClient({ data }: { data: DashboardData }) {
         title="Dashboard"
         description="Overview of your site content"
         extra={
-          <Link href="/publish">
+          <Link href="/admin/publish">
             <Button type="primary">Publish Site</Button>
           </Link>
         }
@@ -62,9 +62,9 @@ export function DashboardClient({ data }: { data: DashboardData }) {
         <Col xs={24} lg={12}>
           <Card title="Quick actions">
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-              <Link href="/pages/new"><Button>New Page</Button></Link>
-              <Link href="/media"><Button>Upload Media</Button></Link>
-              <Link href="/settings"><Button>Site Settings</Button></Link>
+              <Link href="/admin/pages/new"><Button>New Page</Button></Link>
+              <Link href="/admin/media"><Button>Upload Media</Button></Link>
+              <Link href="/admin/settings"><Button>Site Settings</Button></Link>
             </div>
           </Card>
         </Col>
@@ -78,7 +78,7 @@ export function DashboardClient({ data }: { data: DashboardData }) {
                 dataSource={data.draftPagesList}
                 renderItem={(page) => (
                   <List.Item>
-                    <Link href={`/pages/${page.id}`}>{page.title}</Link>
+                    <Link href={`/admin/pages/${page.id}`}>{page.title}</Link>
                   </List.Item>
                 )}
               />

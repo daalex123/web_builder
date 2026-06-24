@@ -1,7 +1,7 @@
 import { exportPreviewContentToDisk } from "@cms/db";
 import { getWebContentDir } from "./utils";
 
-/** Push DB content to apps/web/content for the dev preview server. */
+/** Push DB content to local content/ for the /web live preview. */
 export async function syncPreviewContent() {
   if (process.env.PREVIEW_SYNC === "false") return;
   try {

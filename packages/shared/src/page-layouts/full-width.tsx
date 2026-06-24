@@ -1,7 +1,7 @@
 import type { LayoutShellProps } from "./index";
 
-export function FullWidthLayout({ title, body, blocks }: LayoutShellProps) {
-  const showTitle = Boolean(title?.trim());
+export function FullWidthLayout({ title, body, blocks, suppressTitle }: LayoutShellProps) {
+  const showTitle = !suppressTitle && Boolean(title?.trim());
 
   return (
     <article>

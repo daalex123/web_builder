@@ -893,7 +893,7 @@ export function NavigationSettingsForm({ nav, onChange, siteName, hasLogo }: Pro
         style={{ marginBottom: 16 }}
         message={
           <>
-            Menu links are edited under <Link href="/menus">Menus</Link>. Effect options appear based on
+            Menu links are edited under <Link href="/admin/menus">Menus</Link>. Effect options appear based on
             your selected layout, header, dropdown, and mobile types.
           </>
         }

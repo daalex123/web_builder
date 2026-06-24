@@ -2,7 +2,7 @@
   "name": "Sustriea",
   "description": "Interior design studio — spaces that inspire, furniture that endures.",
   "url": "",
-  "theme": "gravity",
+  "theme": "decorazzio",
   "defaultSeo": {
     "metaTitle": "Gravity — Interior Design",
     "metaDescription": "Full-service interior design, bespoke furniture, and lighting."
@@ -30,15 +30,17 @@
     "effects": {
       "header": {
         "blurStrength": "lg",
-        "transparency": "none",
-        "shadow": "lg",
+        "transparency": "heavy",
+        "shadow": "none",
         "transparentNavTone": "dark",
         "scrolledBackgroundColor": "rgb(242,220,108)",
         "topOpacity": 0,
-        "scrolledOpacity": 0
+        "scrolledOpacity": 0,
+        "backgroundColor": "rgba(249,221,82,0.6)"
       },
       "style": {
-        "logoShrink": "medium"
+        "logoShrink": "medium",
+        "underlineThickness": "medium"
       }
     },
     "activeIndicator": "underline",

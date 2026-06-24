@@ -1,15 +1,17 @@
 import type { LayoutShellProps } from "./index";
 
-export function SidebarLayout({ title, body, blocks, sections }: LayoutShellProps) {
+export function SidebarLayout({ title, body, blocks, sections, suppressTitle }: LayoutShellProps) {
   const sidebarItems = sections
     .filter((s) => s.type === "columns")
     .flatMap((s) => (s.type === "columns" ? s.columns : []));
 
   return (
     <article className="mx-auto max-w-6xl px-6 py-12">
-      <header className="mb-8">
-        <h1 className="text-4xl font-bold tracking-tight text-gray-900">{title}</h1>
-      </header>
+      {!suppressTitle ? (
+        <header className="mb-8">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900">{title}</h1>
+        </header>
+      ) : null}
       <div className="grid gap-10 lg:grid-cols-3">
         <div className="lg:col-span-2">
           {blocks ? <div className="mb-8">{blocks}</div> : null}

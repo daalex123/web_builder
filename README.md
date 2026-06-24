@@ -13,6 +13,24 @@ WordPress-like CMS with a static HTML front site and an admin dashboard.
 
 ## Quick start
 
+**Requires Node 20.19+** (recommended: **22** — see `.nvmrc`).
+
+```bash
+npm run install:local   # checks Node, installs deps + env + database
+npm run dev:all         # web :3000 + admin :3001 (macOS/Linux)
+```
+
+The installer will auto-switch Node via **fnm** or **nvm** if installed. Otherwise it prints install links.
+
+On **Windows**, run admin and web in two terminals:
+
+```bash
+npm run dev:admin
+npm run dev:web
+```
+
+Or step by step:
+
 ```bash
 nvm use 22
 npm install

@@ -7,13 +7,13 @@
   ],
   "scripts": {
     "postinstall": "npm run db:generate --workspace=@cms/db",
-    "dev": "npm run dev --workspace=@cms/web",
-    "dev:all": "npm run dev:admin & npm run dev:web",
+    "install:local": "node scripts/install.mjs",
+    "dev": "npm run dev --workspace=@cms/admin",
+    "dev:all": "npm run dev --workspace=@cms/admin",
     "dev:admin": "npm run dev --workspace=@cms/admin",
     "dev:web": "npm run dev --workspace=@cms/web",
-    "preview:vercel": "npm run preview:vercel --workspace=@cms/admin",
     "build": "npm run build --workspace=@cms/web",
-    "build:admin": "npm run db:generate && npm run build --workspace=@cms/admin",
+    "build:admin": "npm run build --workspace=@cms/admin",
     "serve": "npm run serve --workspace=@cms/web",
     "db:generate": "npm run db:generate --workspace=@cms/db",
     "db:push": "npm run db:push --workspace=@cms/db",
@@ -22,6 +22,9 @@
   },
   "devDependencies": {
     "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.9.0"
   },
   "engines": {
     "node": ">=20.19.0"

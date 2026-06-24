@@ -130,7 +130,7 @@ export function PageEditor({
     const res = await fetch(`/api/pages/${pageId}/duplicate`, { method: "POST" });
     if (res.ok) {
       const data = await res.json();
-      router.push(`/pages/${data.id}`);
+      router.push(`/admin/pages/${data.id}`);
     }
   }
 

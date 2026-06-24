@@ -2,11 +2,11 @@ node_modules
 .next
 out
 dist
+.publish
+*.zip
 .env
 .env.local
 *.tsbuildinfo
 .DS_Store
+*.db
 *.db-journal
-.vercel
-packages/db/generated
-.env*

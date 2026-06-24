@@ -18,6 +18,7 @@ export type LayoutShellProps = {
   body: ReactNode;
   blocks: ReactNode;
   sections: PageSection[];
+  suppressTitle?: boolean;
 };
 
 export type PageLayoutProps = {
@@ -25,15 +26,22 @@ export type PageLayoutProps = {
   content: ContentDoc;
   sections?: PageSection[];
   layout: PageLayout;
+  suppressTitle?: boolean;
 };
 
-export function PageLayoutRenderer({ title, content, sections = [], layout }: PageLayoutProps) {
+export function PageLayoutRenderer({
+  title,
+  content,
+  sections = [],
+  layout,
+  suppressTitle = false,
+}: PageLayoutProps) {
   const body = <RenderContent doc={content} />;
   const blockSections = getBlockSections(layout, sections);
   const blocks = blockSections.length ? (
     <RenderSections sections={blockSections} layout={layout} />
   ) : null;
-  const props = { title, body, blocks, sections };
+  const props = { title, body, blocks, sections, suppressTitle };
 
   switch (layout) {
     case "full-width":

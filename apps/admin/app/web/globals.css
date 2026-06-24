@@ -1,0 +1,5 @@
+@import "tailwindcss";
+@source "../../../packages/shared/src/**/*.{ts,tsx}";
+@source "../../preview/**/*.{ts,tsx}";
+
+@import "../../globals-web.css";

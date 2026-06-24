@@ -125,7 +125,7 @@ function HeaderElementView({
       );
     }
     case "menu":
-      return wrap(ctx.renderMenu("flex flex-wrap items-center"));
+      return wrap(ctx.renderMenu("flex flex-nowrap items-center"));
     case "cta":
       return wrap(
         <ElementCta

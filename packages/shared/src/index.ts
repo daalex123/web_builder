@@ -22,4 +22,5 @@ export {
   type NavigationSettings,
 } from "./navigation";
 export { PageLayoutRenderer, type PageLayoutProps, type LayoutShellProps } from "./page-layouts";
+export { layoutOwnsPageTitle } from "./page-layouts/utils";
 export { sectionStylesSchema, sectionStylesToCss, type SectionStyles } from "./section-styles";

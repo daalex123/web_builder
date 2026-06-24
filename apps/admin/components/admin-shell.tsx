@@ -22,35 +22,39 @@ import {
 } from "@ant-design/icons";
 import { Button, Layout, Menu, Typography } from "antd";
 import { CmsAssistantDrawer } from "./cms-assistant-drawer";
-import { getWebPreviewUrl } from "@/lib/utils";
+import { adminPath, getWebPreviewUrl } from "@/lib/paths";
 
 const { Sider, Content, Header } = Layout;
 
+function navLink(path: string, label: string) {
+  const href = adminPath(path);
+  return { key: href, href, label: <Link href={href}>{label}</Link> };
+}
+
 const baseNavItems = [
-  { key: "/dashboard", icon: <DashboardOutlined />, label: <Link href="/dashboard">Dashboard</Link> },
-  { key: "/pages", icon: <FileTextOutlined />, label: <Link href="/pages">Pages</Link> },
-  { key: "/ai-page-builder", icon: <RobotOutlined />, label: <Link href="/ai-page-builder">AI Builder</Link> },
-  { key: "/cms-assistant", icon: <QuestionCircleOutlined />, label: <Link href="/cms-assistant">CMS Guide</Link> },
-  { key: "/templates", icon: <LayoutOutlined />, label: <Link href="/templates">Templates</Link> },
-  { key: "/media", icon: <PictureOutlined />, label: <Link href="/media">Media</Link> },
-  { key: "/menus", icon: <MenuOutlined />, label: <Link href="/menus">Menus</Link> },
-  { key: "/navigation", icon: <SkinOutlined />, label: <Link href="/navigation">Navigation</Link> },
-  { key: "/assistant", icon: <CustomerServiceOutlined />, label: <Link href="/assistant">Sales Assistant</Link> },
-  { key: "/settings", icon: <SettingOutlined />, label: <Link href="/settings">Site Settings</Link> },
-  { key: "/homepage", icon: <HomeOutlined />, label: <Link href="/homepage">Homepage</Link> },
-  { key: "/publish", icon: <CloudUploadOutlined />, label: <Link href="/publish">Publish</Link> },
+  { ...navLink("/dashboard", "Dashboard"), icon: <DashboardOutlined /> },
+  { ...navLink("/pages", "Pages"), icon: <FileTextOutlined /> },
+  { ...navLink("/ai-page-builder", "AI Builder"), icon: <RobotOutlined /> },
+  { ...navLink("/cms-assistant", "CMS Guide"), icon: <QuestionCircleOutlined /> },
+  { ...navLink("/templates", "Templates"), icon: <LayoutOutlined /> },
+  { ...navLink("/media", "Media"), icon: <PictureOutlined /> },
+  { ...navLink("/menus", "Menus"), icon: <MenuOutlined /> },
+  { ...navLink("/navigation", "Navigation"), icon: <SkinOutlined /> },
+  { ...navLink("/assistant", "Sales Assistant"), icon: <CustomerServiceOutlined /> },
+  { ...navLink("/settings", "Site Settings"), icon: <SettingOutlined /> },
+  { ...navLink("/homepage", "Homepage"), icon: <HomeOutlined /> },
+  { ...navLink("/publish", "Publish"), icon: <CloudUploadOutlined /> },
 ];
 
 const productsNavItem = {
-  key: "/products",
+  ...navLink("/products", "Products"),
   icon: <ShoppingOutlined />,
-  label: <Link href="/products">Products</Link>,
 };
 
 function getNavItems(ecommerceEnabled: boolean) {
   if (!ecommerceEnabled) return baseNavItems;
   const items = [...baseNavItems];
-  const homepageIndex = items.findIndex((item) => item.key === "/homepage");
+  const homepageIndex = items.findIndex((item) => item.key === adminPath("/homepage"));
   items.splice(homepageIndex, 0, productsNavItem);
   return items;
 }
@@ -59,7 +63,7 @@ function getSelectedKey(pathname: string, navItems: ReturnType<typeof getNavItem
   const match = navItems.find(
     (item) => pathname === item.key || pathname.startsWith(`${item.key}/`),
   );
-  return match?.key ?? "/dashboard";
+  return match?.key ?? adminPath("/dashboard");
 }
 
 export function AdminShell({
@@ -92,7 +96,7 @@ export function AdminShell({
 
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/login");
+    router.push(adminPath("/login"));
     router.refresh();
   }
 

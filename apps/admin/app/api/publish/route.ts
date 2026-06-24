@@ -4,13 +4,15 @@ import path from "path";
 import { promisify } from "util";
 import { NextResponse } from "next/server";
 import { exportContentToDisk, prisma } from "@cms/db";
-import { getWebContentDir } from "@/lib/utils";
+import {
+  createPublishZip,
+  formatBytes,
+  getPublishZipStats,
+  getWebAppDir,
+} from "@/lib/publish-export";
+import { getStaticBuildContentDir } from "@/lib/utils";
 
 const execAsync = promisify(exec);
-
-function getWebAppDir() {
-  return path.resolve(process.cwd(), "../../apps/web");
-}
 
 function getBuildEnv(): NodeJS.ProcessEnv {
   return {
@@ -25,10 +27,11 @@ export async function POST(request: Request) {
   const { build = true } = await request.json().catch(() => ({ build: true }));
 
   try {
-    const contentDir = getWebContentDir();
+    const contentDir = getStaticBuildContentDir();
     const content = await exportContentToDisk(contentDir);
 
     let buildOutput = "";
+    let zipSize: number | undefined;
     if (build) {
       const webDir = getWebAppDir();
       const nextDir = path.join(webDir, ".next");
@@ -43,12 +46,20 @@ export async function POST(request: Request) {
         env: getBuildEnv(),
       });
       buildOutput = stdout + stderr;
+
+      const zip = await createPublishZip();
+      zipSize = zip.size;
     }
+
+    const zipStats = getPublishZipStats();
+    const message = build
+      ? `Published ${content.pages.length} pages (${zipStats ? formatBytes(zipStats.size) : "zip ready"})`
+      : `Exported ${content.pages.length} pages`;
 
     await prisma.publishLog.create({
       data: {
         status: "success",
-        message: `Published ${content.pages.length} pages`,
+        message,
       },
     });
 
@@ -56,6 +67,8 @@ export async function POST(request: Request) {
       ok: true,
       pages: content.pages.length,
       buildOutput: build ? buildOutput.slice(-500) : undefined,
+      downloadUrl: build ? "/api/publish/download" : undefined,
+      zipSize,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Publish failed";

@@ -2,9 +2,11 @@ import {
   buildPageMetadata,
   buildWebPageJsonLd,
   getPageBySlug,
+  layoutOwnsPageTitle,
   loadContent,
   type PageLayout,
 } from "@cms/shared";
+import { InnerPageChrome } from "@cms/shared/navigation";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PageLayoutRenderer } from "@/layouts/index";
@@ -42,6 +44,7 @@ export default async function PageRoute({ params }: Props) {
   const { JsonLd } = getThemeComponents(content.site.theme);
   const defaultLayout = page.template === "home" ? "homepage" : "standard";
   const layout = (page.layout ?? defaultLayout) as PageLayout;
+  const ownsTitle = layoutOwnsPageTitle(layout);
 
   return (
     <>
@@ -58,12 +61,20 @@ export default async function PageRoute({ params }: Props) {
         menu={content.menus.header}
         footerMenu={content.menus.footer}
       >
-        <PageLayoutRenderer
+        <InnerPageChrome
           title={page.title}
-          content={page.content}
-          sections={page.sections}
-          layout={layout}
-        />
+          menu={content.menus.header}
+          site={content.site}
+          showTitle={!ownsTitle}
+        >
+          <PageLayoutRenderer
+            title={page.title}
+            content={page.content}
+            sections={page.sections}
+            layout={layout}
+            suppressTitle={ownsTitle}
+          />
+        </InnerPageChrome>
       </ThemeShell>
     </>
   );

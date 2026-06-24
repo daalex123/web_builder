@@ -1,0 +1,84 @@
+{
+  "slug": "home",
+  "title": "",
+  "template": "home",
+  "layout": "homepage",
+  "sections": [
+    {
+      "id": "sec_1781873417291_qzgh0c",
+      "type": "slider",
+      "slides": [
+        {
+          "image": "/uploads/2026/06/1781873474851-2.jpg",
+          "eyebrow": "New Collection",
+          "mainText": "Crafted for modern living",
+          "subText": "Discover furniture designed for comfort, quality, and timeless style.",
+          "primaryButton": {
+            "label": "Shop Now",
+            "href": "/shop/",
+            "variant": "primary"
+          },
+          "secondaryButton": {
+            "label": "Explore",
+            "href": "/about/",
+            "variant": "outline"
+          },
+          "align": "left",
+          "valign": "center"
+        },
+        {
+          "image": "/uploads/2026/06/1781873474836-1.jpg",
+          "eyebrow": "Best Sellers",
+          "mainText": "Transform your space",
+          "subText": "Curated pieces for every room in your home.",
+          "primaryButton": {
+            "label": "View Collection",
+            "href": "/collection/",
+            "variant": "primary"
+          },
+          "align": "center",
+          "valign": "bottom"
+        },
+        {
+          "image": "/uploads/2026/06/1781873474863-3.jpg",
+          "eyebrow": "New slide",
+          "mainText": "Slide headline",
+          "subText": "Add your message here",
+          "primaryButton": {
+            "label": "Get Started",
+            "href": "/",
+            "variant": "primary"
+          },
+          "align": "left",
+          "valign": "center"
+        }
+      ],
+      "effect": "crossfade",
+      "autoplay": true,
+      "interval": 6,
+      "pauseOnHover": true,
+      "loop": true,
+      "showArrows": false,
+      "showDots": true,
+      "showProgress": false,
+      "height": "2xl",
+      "kenBurns": true,
+      "overlay": "gradient",
+      "arrowStyle": "circle",
+      "dotStyle": "bars",
+      "styles": {
+        "titleSize": "lg",
+        "textAlign": "left"
+      }
+    }
+  ],
+  "content": {
+    "type": "doc",
+    "content": []
+  },
+  "seo": {
+    "metaTitle": "tt1",
+    "metaDescription": "",
+    "noIndex": false
+  }
+}

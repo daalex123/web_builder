@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { ADMIN_BASE } from "@/lib/paths";
 
 const COOKIE_NAME = "cms_session";
 
@@ -22,13 +23,10 @@ async function getSessionToken(): Promise<string> {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (
-    pathname.startsWith("/login") ||
-    pathname.startsWith("/api/auth") ||
-    pathname.startsWith("/api/assistant") ||
-    pathname.startsWith("/uploads") ||
-    pathname.startsWith("/_next")
-  ) {
+  const isAdminRoute = pathname === ADMIN_BASE || pathname.startsWith(`${ADMIN_BASE}/`);
+  const isAdminLogin = pathname === `${ADMIN_BASE}/login`;
+
+  if (!isAdminRoute || isAdminLogin) {
     return NextResponse.next();
   }
 
@@ -36,12 +34,12 @@ export async function middleware(request: NextRequest) {
   const expected = await getSessionToken();
 
   if (token !== expected) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL(`${ADMIN_BASE}/login`, request.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/admin/:path*"],
 };

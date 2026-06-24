@@ -1,0 +1,11 @@
+{
+  "remoteName": "origin",
+  "projects": [
+    {
+      "id": "prj_KNkwDHPN7l4iI2lhQeFOMMhNoQq8",
+      "name": "web-builder-admin-f7wb",
+      "directory": "apps/admin",
+      "orgId": "team_Xmh2lvJY0gIPFdaT7Zmp6X7P"
+    }
+  ]
+}

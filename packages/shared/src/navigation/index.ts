@@ -108,5 +108,13 @@ export {
 } from "./header-background";
 
 export { resolveNavConfig } from "./resolve";
-export { SiteHeader } from "./site-header";
+export { SiteHeader, MainMenuNav } from "./site-header";
 export { SiteLogo } from "./site-logo";
+export { SecondaryNavBar } from "./secondary-nav-bar";
+export { InnerPageChrome } from "./inner-page-chrome";
+export {
+  resolveSecondaryNav,
+  normalizeNavPath,
+  type SecondaryNavContext,
+  type SecondaryNavItem,
+} from "./secondary-nav";

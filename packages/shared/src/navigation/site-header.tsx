@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import type { MenuItem, SiteSettings } from "../schemas";
 import { EFFECT_CLASS_MAP } from "./effect-options";
 import { resolveHeaderShellClassAndStyle } from "./header-background";
@@ -40,6 +40,19 @@ const MEGA_COLS_CLASS = {
   "2": "sm:grid-cols-2",
   "3": "sm:grid-cols-2 lg:grid-cols-3",
 } as const;
+
+/** Tailwind-safe mega panel width — backed by .cms-mega-panel in global CSS. */
+const MEGA_PANEL_CLASS =
+  "cms-mega-panel border border-neutral-200 bg-white p-6";
+
+const DROPDOWN_OFFSET_PADDING = {
+  none: "pt-0",
+  sm: "pt-1",
+  md: "pt-2",
+  lg: "pt-4",
+} as const;
+
+const VIEWPORT_GUTTER = 16;
 
 function isOverlayLight(config: NavConfig, scrolled: boolean): boolean {
   return (
@@ -127,6 +140,66 @@ function linkClass(
   }`;
 }
 
+function useDropdownHoverHandlers(setOpen: (open: boolean) => void) {
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const handleEnter = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setOpen(true);
+  };
+
+  const handleLeave = () => {
+    closeTimer.current = setTimeout(() => setOpen(false), 120);
+  };
+
+  useEffect(() => () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+  }, []);
+
+  return { handleEnter, handleLeave };
+}
+
+function useDropdownLeft(
+  open: boolean,
+  anchorRef: RefObject<HTMLElement | null>,
+  panelRef: RefObject<HTMLDivElement | null>,
+) {
+  const [left, setLeft] = useState(0);
+
+  useLayoutEffect(() => {
+    if (!open || !anchorRef.current || !panelRef.current) {
+      setLeft(0);
+      return;
+    }
+
+    const update = () => {
+      const anchor = anchorRef.current!;
+      const panel = panelRef.current!;
+      const anchorRect = anchor.getBoundingClientRect();
+      const panelWidth = panel.offsetWidth;
+      const parentLeft = anchor.offsetParent?.getBoundingClientRect().left ?? anchorRect.left;
+
+      let nextLeft = 0;
+      if (anchorRect.left + panelWidth > window.innerWidth - VIEWPORT_GUTTER) {
+        nextLeft = window.innerWidth - VIEWPORT_GUTTER - panelWidth - parentLeft;
+      }
+      if (nextLeft < 0) nextLeft = 0;
+      setLeft(nextLeft);
+    };
+
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(panelRef.current);
+    window.addEventListener("resize", update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", update);
+    };
+  }, [open, anchorRef, panelRef]);
+
+  return left;
+}
+
 function NavDropdownItem({
   item,
   config,
@@ -156,10 +229,10 @@ function NavDropdownItem({
   }
 
   const dfx = config.effects.dropdown;
-  const panelBase =
+  const panelSurface =
     config.dropdown === "mega"
-      ? `absolute left-0 top-full z-50 w-[min(100vw-2rem,560px)] border border-neutral-200 bg-white p-6 ${EFFECT_CLASS_MAP.shadow[dfx.shadow]} ${EFFECT_CLASS_MAP.rounded[dfx.rounded]}`
-      : `absolute left-0 top-full z-50 min-w-[220px] border border-neutral-200 bg-white py-2 ${EFFECT_CLASS_MAP.shadow[dfx.shadow]} ${EFFECT_CLASS_MAP.rounded[dfx.rounded]}`;
+      ? `${MEGA_PANEL_CLASS} ${EFFECT_CLASS_MAP.shadow[dfx.shadow]} ${EFFECT_CLASS_MAP.rounded[dfx.rounded]}`
+      : `min-w-[220px] border border-neutral-200 bg-white py-2 ${EFFECT_CLASS_MAP.shadow[dfx.shadow]} ${EFFECT_CLASS_MAP.rounded[dfx.rounded]}`;
 
   const panelAnim =
     config.dropdown === "slide"
@@ -170,58 +243,77 @@ function NavDropdownItem({
 
   const itemHover = EFFECT_CLASS_MAP.dropdownItemHover[dfx.itemHover];
   const megaCard = EFFECT_CLASS_MAP.megaCard[dfx.megaCardStyle];
-  const panelClass = `${panelBase} ${EFFECT_CLASS_MAP.dropdownOffset[dfx.offset]} ${panelAnim}`.trim();
+  const panelClass = `${panelSurface} ${panelAnim}`.trim();
+  const anchorRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const isClickTrigger = config.dropdownTrigger === "click";
+  const { handleEnter, handleLeave } = useDropdownHoverHandlers(setOpen);
+  const dropdownLeft = useDropdownLeft(open, anchorRef, panelRef);
+  const offsetPadding = DROPDOWN_OFFSET_PADDING[dfx.offset];
 
-  const triggerProps =
-    config.dropdownTrigger === "click"
-      ? {
-          onClick: () => setOpen((v) => !v),
-          onMouseEnter: undefined,
-          onMouseLeave: undefined,
-        }
-      : {
-          onMouseEnter: () => setOpen(true),
-          onMouseLeave: () => setOpen(false),
-          onClick: undefined,
-        };
+  useEffect(() => {
+    if (!isClickTrigger || !open) return;
+    const onDocClick = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (anchorRef.current?.contains(target)) return;
+      if (panelRef.current?.contains(target)) return;
+      setOpen(false);
+    };
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, [isClickTrigger, open]);
+
+  const hoverProps = isClickTrigger
+    ? {}
+    : { onMouseEnter: handleEnter, onMouseLeave: handleLeave };
+
+  const panelContent =
+    config.dropdown === "mega" ? (
+      <div className={`grid gap-4 ${MEGA_COLS_CLASS[config.megaColumns]}`}>
+        {item.children.map((child) => (
+          <Link
+            key={child.label}
+            href={child.href ?? "#"}
+            className={`rounded-lg px-3 py-2 text-sm text-neutral-700 ${megaCard} ${itemHover}`}
+            onClick={() => setOpen(false)}
+          >
+            {child.label}
+          </Link>
+        ))}
+      </div>
+    ) : (
+      item.children.map((child) => (
+        <Link
+          key={child.label}
+          href={child.href ?? "#"}
+          className={`block px-4 py-2 text-sm text-neutral-700 ${itemHover}`}
+          onClick={() => setOpen(false)}
+        >
+          {child.label}
+        </Link>
+      ))
+    );
 
   return (
-    <div className="relative" {...triggerProps}>
+    <div className="relative shrink-0" {...hoverProps}>
       <button
+        ref={anchorRef}
         type="button"
         className={linkClass(config.style, config, active, overlayLight)}
         data-active={active ? "true" : undefined}
+        onClick={isClickTrigger ? () => setOpen((v) => !v) : undefined}
       >
         {item.label}
         <span className="ml-1 opacity-60">▾</span>
       </button>
       {open ? (
-        <div className={panelClass}>
-          {config.dropdown === "mega" ? (
-            <div className={`grid gap-4 ${MEGA_COLS_CLASS[config.megaColumns]}`}>
-              {item.children.map((child) => (
-                <Link
-                  key={child.label}
-                  href={child.href ?? "#"}
-                  className={`rounded-lg px-3 py-2 text-sm text-neutral-700 ${megaCard} ${itemHover}`}
-                  onClick={() => setOpen(false)}
-                >
-                  {child.label}
-                </Link>
-              ))}
-            </div>
-          ) : (
-            item.children.map((child) => (
-              <Link
-                key={child.label}
-                href={child.href ?? "#"}
-                className={`block px-4 py-2 text-sm text-neutral-700 ${itemHover}`}
-                onClick={() => setOpen(false)}
-              >
-                {child.label}
-              </Link>
-            ))
-          )}
+        <div
+          className={`absolute top-full ${offsetPadding}`}
+          style={{ left: dropdownLeft, zIndex: 200 }}
+        >
+          <div ref={panelRef} className={panelClass}>
+            {panelContent}
+          </div>
         </div>
       ) : null}
     </div>
@@ -251,7 +343,7 @@ function NavItems({
   const spacing = EFFECT_CLASS_MAP.spacing[config.effects.style.spacing];
 
   return (
-    <nav className={`flex flex-wrap items-center ${spacing} ${className ?? ""} ${alignClass}`}>
+    <nav className={`flex flex-nowrap items-center overflow-visible ${spacing} ${className ?? ""} ${alignClass}`}>
       {menu.map((item) => (
         <NavDropdownItem key={item.label} item={item} config={config} pathname={pathname} overlayLight={overlayLight} />
       ))}
@@ -390,7 +482,7 @@ function HeaderShell({
 
   return (
     <header
-      className={`${positionClass} transition-colors ${effectClass} ${themedMenu}`.trim()}
+      className={`${positionClass} overflow-visible transition-colors ${effectClass} ${themedMenu}`.trim()}
       style={{ transitionDuration: `${transitionMs}ms`, ...bgStyle, ...menuVars }}
     >
       {topBar}
@@ -401,9 +493,9 @@ function HeaderShell({
 
 function Container({ config, children }: { config: NavConfig; children: ReactNode }) {
   if (config.containerWidth === "full") {
-    return <div className="w-full px-4">{children}</div>;
+    return <div className="w-full overflow-visible px-4 sm:px-6">{children}</div>;
   }
-  return <div className="mx-auto max-w-7xl px-4">{children}</div>;
+  return <div className="mx-auto max-w-7xl overflow-visible px-4 sm:px-6">{children}</div>;
 }
 
 export function SiteHeader({
@@ -534,7 +626,7 @@ export function SiteHeader({
               menu={menu}
               config={config}
               pathname={pathname}
-              className="flex flex-1 flex-wrap items-center gap-1"
+              className="flex flex-1 flex-nowrap items-center gap-1"
               overlayLight={overlayLight}
             />
           </div>
@@ -545,7 +637,7 @@ export function SiteHeader({
   } else if (config.style === "split") {
     mainRow = (
       <Container config={config}>
-        <div className={`flex items-center gap-4 ${py}`}>
+        <div className={`flex items-center gap-4 overflow-visible ${py}`}>
           <div className="shrink-0">{logo}</div>
           <NavItems
             menu={menu}
@@ -564,14 +656,14 @@ export function SiteHeader({
   } else {
     mainRow = (
       <Container config={config}>
-        <div className={`flex items-center justify-between gap-4 ${py}`}>
+        <div className={`flex items-center justify-between gap-4 overflow-visible ${py}`}>
           {logo}
-          <div className="hidden flex-1 items-center lg:flex">
+          <div className="hidden flex-1 items-center overflow-visible lg:flex">
             <NavItems
               menu={menu}
               config={config}
               pathname={pathname}
-              className="flex flex-1 flex-wrap items-center gap-1"
+              className="flex flex-1 flex-nowrap items-center gap-1"
               overlayLight={overlayLight}
             />
           </div>
@@ -589,5 +681,28 @@ export function SiteHeader({
       {mainRow}
       <MobileMenu menu={menu} config={config} open={mobileOpen} onClose={() => setMobileOpen(false)} />
     </HeaderShell>
+  );
+}
+
+/** Horizontal main menu for inner page headers (dropdowns, same styling as site header). */
+export function MainMenuNav({
+  menu,
+  config,
+  pathname,
+  className,
+}: {
+  menu: MenuItem[];
+  config: NavConfig;
+  pathname: string;
+  className?: string;
+}) {
+  return (
+    <NavItems
+      menu={menu}
+      config={config}
+      pathname={pathname}
+      overlayLight={false}
+      className={className}
+    />
   );
 }

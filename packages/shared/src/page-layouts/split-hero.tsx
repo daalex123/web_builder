@@ -2,7 +2,7 @@ import { RenderSections } from "../render-sections";
 import { findFirstShowcaseSection } from "./utils";
 import type { LayoutShellProps } from "./index";
 
-export function SplitHeroLayout({ title, body, blocks, sections }: LayoutShellProps) {
+export function SplitHeroLayout({ title, body, blocks, sections, suppressTitle }: LayoutShellProps) {
   const hero = sections.find((s) => s.type === "hero");
 
   if (!hero) {
@@ -24,9 +24,11 @@ export function SplitHeroLayout({ title, body, blocks, sections }: LayoutShellPr
     <article>
       <div className="grid min-h-[420px] lg:grid-cols-2">
         <div className="flex flex-col justify-center bg-gray-900 px-8 py-16 text-white lg:px-16">
-          <h1 className="text-4xl font-bold md:text-5xl">
-            {hero && hero.type === "hero" ? hero.title : title}
-          </h1>
+          {!suppressTitle ? (
+            <h1 className="text-4xl font-bold md:text-5xl">
+              {hero && hero.type === "hero" ? hero.title : title}
+            </h1>
+          ) : null}
           {hero && hero.type === "hero" && hero.subtitle ? (
             <p className="mt-4 text-lg text-gray-300">{hero.subtitle}</p>
           ) : null}
