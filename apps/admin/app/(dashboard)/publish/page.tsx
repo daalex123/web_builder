@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Alert, Button, Card, List, Space, Typography } from "antd";
 import { CloudUploadOutlined, ExportOutlined } from "@ant-design/icons";
 import { PageHeader } from "@/components/page-header";
-import { getWebPreviewUrl } from "@/lib/utils";
 
 type PublishLog = {
   id: string;
@@ -40,22 +39,11 @@ export default function PublishPage() {
 
     const data = await res.json();
     if (res.ok) {
-      const deployNote =
-        data.mode === "vercel"
-          ? data.deployTriggered
-            ? " Web site redeploy triggered."
-            : " Redeploy the web project (or set VERCEL_WEB_DEPLOY_HOOK_URL) to update the live site."
-          : build
-            ? " Static HTML rebuilt."
-            : "";
-
       setResult({
         type: "success",
-        message: `Published ${data.pages} pages.${
-          data.mode === "vercel"
-            ? " Content saved to database."
-            : " Exported to apps/web/content/."
-        }${deployNote}`,
+        message: `Published ${data.pages} pages to static site.${
+          build ? " Static HTML rebuilt." : ""
+        }`,
       });
       loadLogs();
     } else {
@@ -79,7 +67,7 @@ export default function PublishPage() {
           <Typography.Text code>apps/web/content/</Typography.Text> — refresh the browser to see
           changes. No build required.
         </Typography.Paragraph>
-        <Button type="link" href={getWebPreviewUrl()} target="_blank" style={{ padding: 0 }}>
+        <Button type="link" href={process.env.NEXT_PUBLIC_WEB_URL ?? "http://localhost:3000"} target="_blank" style={{ padding: 0 }}>
           Open preview site →
         </Button>
       </Card>
@@ -88,9 +76,8 @@ export default function PublishPage() {
         <Typography.Title level={5}>Production deploy</Typography.Title>
         <Typography.Paragraph>
           This exports all <Typography.Text strong>published</Typography.Text> pages from
-          the database. Locally, files are written to{" "}
-          <Typography.Text code>apps/web/content/</Typography.Text>. On Vercel, content is
-          saved to the database and the web project build pulls it from there.
+          the database to <Typography.Text code>apps/web/content/</Typography.Text> and optionally
+          rebuilds the static HTML site.
         </Typography.Paragraph>
 
         <Space style={{ marginTop: 16 }}>

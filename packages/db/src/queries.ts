@@ -18,9 +18,8 @@ import {
   normalizePageSections,
   resolveHomepageProducts,
   resolvePageSectionProducts,
-  siteContentSchema,
 } from "@cms/shared";
-import type { Page as PrismaPage } from "../generated/prisma/client";
+import type { Page as PrismaPage } from "@prisma/client";
 import { prisma } from "./client";
 
 function parseJson<T>(value: string | null | undefined, fallback: T): T {
@@ -418,44 +417,12 @@ function writeContentToDisk(contentDir: string, content: SiteContent) {
   return content;
 }
 
-export async function savePublishedSnapshot(content: SiteContent) {
-  const data = JSON.stringify(content);
-  return prisma.publishSnapshot.upsert({
-    where: { id: "latest" },
-    create: { id: "latest", data },
-    update: { data },
-  });
-}
-
-export async function getPublishedSnapshot(): Promise<SiteContent | null> {
-  const row = await prisma.publishSnapshot.findUnique({ where: { id: "latest" } });
-  if (!row) return null;
-  return siteContentSchema.parse(JSON.parse(row.data));
-}
-
-export async function exportPublishedSnapshotToDisk(contentDir: string) {
-  const content = await getPublishedSnapshot();
-  if (!content) {
-    throw new Error("No published snapshot in database");
-  }
-  return writeContentToDisk(contentDir, content);
-}
-
-/** Save snapshot to DB; write JSON files when contentDir is provided (local dev). */
-export async function publishContent(content: SiteContent, contentDir?: string) {
-  await savePublishedSnapshot(content);
-  if (contentDir) {
-    return writeContentToDisk(contentDir, content);
-  }
-  return content;
-}
-
 export async function exportContentToDisk(contentDir: string) {
   const content = await buildPublishedContent();
   if (!content) {
     throw new Error("Site settings not configured");
   }
-  return publishContent(content, contentDir);
+  return writeContentToDisk(contentDir, content);
 }
 
 export async function exportPreviewContentToDisk(contentDir: string) {

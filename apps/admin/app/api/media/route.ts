@@ -1,6 +1,8 @@
+import fs from "fs";
+import path from "path";
 import { NextResponse } from "next/server";
 import { createMedia, listMedia } from "@cms/db";
-import { saveUpload } from "@/lib/storage";
+import { getUploadDir } from "@/lib/utils";
 import {
   getUploadSubdir,
   isAllowedMimeType,
@@ -39,7 +41,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "No files provided" }, { status: 400 });
   }
 
+  const uploadDir = getUploadDir();
   const subdir = getUploadSubdir();
+  const targetDir = path.join(uploadDir, subdir);
+  fs.mkdirSync(targetDir, { recursive: true });
+
   const results = [];
   const errors: string[] = [];
 
@@ -53,30 +59,23 @@ export async function POST(request: Request) {
       continue;
     }
 
-    try {
-      const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-      const filename = `${Date.now()}-${safeName}`;
-      const buffer = Buffer.from(await file.arrayBuffer());
-      const { url } = await saveUpload({
-        buffer,
-        filename,
-        subdir,
-        mimeType: file.type,
-      });
+    const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+    const filename = `${Date.now()}-${safeName}`;
+    const filePath = path.join(targetDir, filename);
+    const buffer = Buffer.from(await file.arrayBuffer());
+    fs.writeFileSync(filePath, buffer);
 
-      const alt = (formData.get(`alt_${file.name}`) as string) || "";
-      const media = await createMedia({
-        filename: file.name,
-        url,
-        alt,
-        mimeType: file.type,
-        size: file.size,
-      });
-      results.push(media);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Upload failed";
-      errors.push(`${file.name}: ${message}`);
-    }
+    const alt = (formData.get(`alt_${file.name}`) as string) || "";
+    const url = `/uploads/${subdir}/${filename}`;
+
+    const media = await createMedia({
+      filename: file.name,
+      url,
+      alt,
+      mimeType: file.type,
+      size: file.size,
+    });
+    results.push(media);
   }
 
   return NextResponse.json(

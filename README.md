@@ -86,30 +86,28 @@ cms/
 
 ## Environment
 
-Uses **PostgreSQL** via [Prisma Postgres](https://vercel.com/marketplace/prisma) (recommended for Vercel) or any Postgres provider.
-
-### Vercel setup
-
-1. Vercel project → **Storage** → **Connect Database** → **Prisma**
-2. Vercel adds `DATABASE_URL` automatically
-3. Copy the **direct** connection string from [Prisma Console](https://console.prisma.io/) and add it as `DIRECT_URL` in Vercel env vars
-4. Pull env locally: `vercel env pull apps/admin/.env.local`
-5. Push schema once: `npm run db:push` then `npm run db:seed`
-
 `apps/admin/.env.local`:
 
 ```
-DATABASE_URL="postgresql://..."   # pooled — app runtime
-DIRECT_URL="postgresql://..."     # direct — Prisma CLI only
+DATABASE_URL="file:./dev.db"
 AUTH_SECRET="your-secret"
 ADMIN_PASSWORD="admin123"
 NEXT_PUBLIC_WEB_URL="http://localhost:3000"
 OPENAI_API_KEY="sk-..."   # or NVIDIA nvapi-... key
+
+# NVIDIA NIM (optional — auto-detected from nvapi- prefix)
+# AI_API_BASE_URL="https://integrate.api.nvidia.com/v1"
+# AI_MODEL="nvidia/nemotron-3-ultra-550b-a55b"
+# AI_TEMPERATURE="1"
+# AI_TOP_P="0.95"
+# AI_MAX_TOKENS="16384"
+# AI_REASONING_BUDGET="16384"
+# AI_ENABLE_THINKING="true"
 ```
 
-Also set the same `DATABASE_URL` and `DIRECT_URL` in `packages/db/.env` for Prisma CLI commands.
-
 Optional: set `PREVIEW_SYNC=false` to disable auto-sync on save.
+
+> **Note:** SQLite paths are resolved relative to `packages/db/prisma/` (where `schema.prisma` lives). Use `file:./dev.db` — not a path from the admin app folder.
 
 ## Scripts
 
@@ -122,11 +120,6 @@ Optional: set `PREVIEW_SYNC=false` to disable auto-sync on save.
 | `npm run setup` | Init database + seed |
 | `npm run db:studio` | Open Prisma Studio |
 
-## Vercel deploy (admin app)
+## Upgrading to PostgreSQL / Supabase
 
-- **Root directory:** `apps/admin`
-- **Build command:** `cd ../.. && npm install && npm run build:admin`
-- **Install command:** `npm install` (from repo root if using default)
-- Required env vars: `DATABASE_URL`, `DIRECT_URL`, `AUTH_SECRET`, `ADMIN_PASSWORD`, `NEXT_PUBLIC_WEB_URL`
-
-> **Note:** Media uploads and content sync still write to the local filesystem — they won't persist on Vercel until you add blob storage.
+Change `DATABASE_URL` in `packages/db/.env` to your Postgres connection string and update `provider` in `prisma/schema.prisma` from `sqlite` to `postgresql`, then run `npm run db:push`.

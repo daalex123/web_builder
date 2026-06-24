@@ -1,10 +1,10 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 model SiteSettings {
@@ -66,12 +66,6 @@ model PublishLog {
   status    String
   message   String?
   createdAt DateTime @default(now())
-}
-
-model PublishSnapshot {
-  id        String   @id @default("latest")
-  data      String
-  updatedAt DateTime @updatedAt
 }
 
 model Product {
